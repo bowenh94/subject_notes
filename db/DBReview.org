@@ -1,0 +1,549 @@
+* Intro to DB
+** Problems for flat-files 
+   access 
+   standard data structure 
+   simultaneously access 
+   copies of data may lead to consistency problem 
+** Life cycle 
+**** Design
+     + conceptual 
+       logical except attributes of entities 
+     + logical
+       physical except data type 
+     + physical
+       All contains like in Mysql 
+**** Implement 
+**** Data access 
+**** Administration 
+** SQL 
+*** DDL 
+    Data Definition Language 
+    /CREATE/ /ALTER/ /DROP/
+*** DML 
+    Data Manipulation Language 
+    /SELECT/ /INSERT/
+*** DCL
+    Data Control Language 
+    /GRANT/ /REVOKE/
+*** /HAVING/ /WHERE/
+    having on group 
+    where on individual row 
+*** Join
+    Left|Right join, insert record that left or right do not having 
+*** Deal with related table with FK
+**** /RESTRICT/
+     not allow operation on parent table if related row in child table 
+**** /CASCADE/
+     update child table automatic 
+**** /SET NULL/
+     if delete, set FK as NULL
+*** DDL order 
+    Create without FK first, Delete without FK last
+*** Set Operation 
+**** /UNION/ 
+     show all *rows*
+**** /INTERSECT/
+     show rows *common* in query
+**** /EXCEPT/
+     show rows *diff* in query
+*** Format 
+    /FORMAT(N,D)/ N number, D digital numbers 
+    /CAST(EXPRESSION AS TYPE)/  change output data type
+*** Update 
+    /UPDATE COLUMN/
+     /SET ATTRIBUTE=/
+      /CASE/
+       /WHEN MONEY > 1000/
+       /THEN MONEY*0.5/
+       /ELSE MONEY*1.0/
+      /END/
+*** View
+    /CREATE VIEW VIEWNAME AS/
+      /SELECT .../
+** SubType
+   Should put a index in relation line
+   d -> disjoint, only one of these
+   o -> overlapping, can be multiple of subtypes
+   *Double line* must be a subtype
+   *Single line* can 
+* Normalisation 
+** Definition 
+   Theoretical foundation for relational model 
+   Application of rules improve db design 
+   Logical design 
+** Purpose 
+   Prevent data redundancy: no redundant store data
+   Prevent update anomalies: only need update once for a fact
+   Prevent delete anomalies: delete one table not infect on other table 
+   Prevent insert anomalies: insertion do not require multiple times 
+*** Problems 
+    Assume non-key columns updated frequently 
+    Slow down /Select/ for need of /join/
+    Some times de-normalisation to improve performance 
+** Feature 
+   Attributes functional dependent on the only *KEY*
+   functional dependent: y = f(x) X->Y, X is determinants(KEY). 
+   Partial functional dependency: Y depends on part of X
+   Transitive dependency: functional dependency on 2 non-key attributes
+** Hierarchy of normal forms 
+*** 1NF
+    Single value in table 
+*** 2NF 
+    remove *partial functional dependency*
+    all attributes depend on WHOLE KEY
+*** 3NF
+    remove *transitive dependencies* 
+    all attributes depend on ONLY PK
+*** BCNF
+    remove all functional dependencies
+    NO MORE THAN ONE CPK for same non-key
+    e.g. replace the candidate PK with non-key attributes and table become non-2NF, normalisa
+* Physical design
+** Inputs and decision make 
+*** Inputs 
+    Normalised data model 
+    Attributes definition 
+    Volume estimates 
+    Response time expectation 
+    Security need 
+    Backup and recovery need 
+    Integrity expectation
+    DBMS used 
+*** Decisions 
+    Attributes data type 
+    Physical record description 
+    File organization
+    Indexes 
+    Query optimisation 
+** Data type 
+   Column: smallest unit of data in database 
+   Store and use information efficiently
+   storage space 
+   fixed or variable length 
+   represent all possible values 
+   + data integrity
+     default value 
+     range control 
+     null control 
+     referential integrity
+   support manipulation 
+** Indexing 
+*** When to use 
+    larger table 
+    >100 distinct value in column use, <30 not use
+    freq in /WHERE/ /ORDER BY/ /GROUP BY/
+*** When not use 
+    volatile: freq changed, each change require update of index 
+** De-normalisation 
+*** When to use 
+    speed up 
+    few manipulation
+    lot of lookup
+* DB application
+** Business logic 
+   e.g. 
+   start from accept from user 
+   do the operation on DB
+   return error or success
+** Procedural programming language
+   sequence
+   iteration 
+   control flow 
+   UI
+*** SQL + PPL
+    Embedded SQL: library call do SQL implementation
+    Dynamic SQL: send SQL to DBMS via middleware 
+    + Stored procedure(Trigger): 
+      procedural code execute in DBMS, business logic within database 
+      + Advantage 
+        Compiled SQL statement 
+        Faster code execute 
+        reduce network traffic 
+        improve security 
+        business under control of DBA
+        Thin client 
+      + Disadvantage
+        Harder to implementation
+        Proprietary language: Mysql can not used in oracle
+** Application architecture
+*** Presentation 
+    IO
+*** Business
+    Command handling + enforce rules 
+*** Storage 
+    store data + data integrity
+*** architectures
+**** 1 tier: mainframe 
+     PBS all in one 
+**** 2 tier: client + dbms 
+     PB in client 
+     S in dbms 
+     + advantage 
+       share process load 
+       data integrity
+       business rule can do on dbms 
+     + disadvantage: client take too much roles 
+       PB all in client 
+       db schema change lead to broken 
+       update deployed on all client 
+       db connect to all client, hard to scale 
+**** 3 tier: client + web server + db server 
+     P in client, B in web server, S in db server 
+     + advantage
+       scalability 
+       flexibility: can change B easily 
+       independent failure tolerance
+       long-term cost reduction 
+       security: client only for presentation 
+     + disadvantage
+       high short term cost 
+       tools and training 
+       complex to design 
+       variable standard
+**** 4 tier: client + web server + app server + db server 
+*** Security 
+    application password 
+    database password 
+    communication secure 
+     
+** Web application 
+*** Reason 
+    thin client
+    web browser is ubiquitous 
+    Platform and OS independent 
+*** Infrastructure 
+    Browser 
+    Web Server 
+    Web page: static and dynamic
+    WWW 
+*** HTML
+    Document -> root element <html> -> <head> -> <body> -> <element>
+*** Old style web apps 
+    + Placing SQL inside HTML file 
+      Mix PBS 
+      hart to change 
+    + Reinvention wheel 
+      same operation need to write at each time 
+    + client platform changed: phone, tablets 
+*** WWW versus Web Service 
+    WWW for human access db
+    Web Service for computer access db
+**** 2 approaches 
+     SOAP: Simple object access protocol 
+     REST: representation state transfer 
+           nouns are resource via URL
+           verbs other format of SQL: GET(select),POST(insert),PUT(update),DELETE(delete)
+* Transaction 
+** Definition 
+   Block of operation only be execute entirely or aborted
+   treated as atomic 
+   can change db from one state to another 
+** Reason for use transaction 
+   Define unit of work
+   Concurrent access to data
+*** SQL keywords 
+    begin commit rollback
+    /BEGIN TRANSACTION/
+      /STATEMENT/
+    /COMMIT/ OR /ROLLBACK/
+** Properties -> ACID
+   Atomicity: all code in transaction should be made or drop 
+   Consistency: Multiple execute get the same value on same data 
+   Isolation: changes is invisible until finished 
+   Durability: when finished, changes should be permanent, even system fail
+* Concurrency
+** Lost update 
+   One withdraw 100, other withdraw 200 same time, the update is not show to other
+** Uncommitted data 
+   Rollback not show to some one access concurrently 
+** Inconsistent retrieval 
+   some data retrieval before change, other read after change. 
+   so we may have multiple version of data 
+** Concurrency control methods 
+*** Locking 
+**** Level of lock 
+     Database level: SQLite -> not suitable for multi-user
+     Table level: -> not suitable for highly multi-user
+     Page level: lock disk page, not used
+     Row level: lock one record, MySql, Oracle 
+     Field level: attributes lock 
+**** Type of lock
+     Binary lock: even 2 read can not execute 
+     Exclusive lock: lock only on WRITE 
+     Shared lock: Allow read 
+**** Deadlock
+     A lock X want Y
+     B lock Y want X
+*** Timestamp 
+    Put time stamp on data item, DBMS decide whether allow access or not 
+*** Optimistic 
+**** Assumption 
+     majority of operation is not conflict 
+     After execute, doing commit, check data altered or not, if so rollback
+* Logging transaction
+  restore database to previous consistent state 
+  Track all updates to data 
+  Contains: begin -> operation(Object, before and after stats, pointer to previous and next log entries) -> Commit 
+* Distributed db
+** Definition
+   Single logical db physically spread on multiple computers 
+*** Versus Decentralized db
+    collection of independent db 
+** Advantage 
+   Faster local data access
+   Faster data process -> work load distribution
+   Openness -> modular growth 
+   reliability and availability
+   recovery 
+** Disadvantage
+   data integrity
+   complexity on management and control 
+   security 
+   standard-> heterogeneity
+** Objectives and trade-offs 
+*** Location transparency
+*** local autonomy 
+    can administer their local data 
+    control data 
+    administer security
+    log transaction
+    recovery
+    full access on local data 
+*** Availability vs consistency
+** Options 
+*** Replication -> better for read only data -> snapshot 
+    + Advantage 
+      reliability
+      fast access 
+      reduce network traffic at prime time 
+      independent failure tolerance 
+    + Disadvantage
+      more storage space 
+      Integrity
+      time for update 
+      network capability
+*** Partition 
+    Vertical: columns
+              require join 
+    Horizontal: rows 
+    + Advantage
+      Efficiency: store close to used site 
+      Performance: local access 
+      Security: relevant data store locally 
+      Easy query: when need data across partitions 
+    + Disadvantage
+      inconsistent access time 
+      no data replication 
+*** Updates 
+    + Sync 
+      Integrity
+      high response time and high network usage 
+    + Async 
+      tolerant temporary inconsistency 
+      complexity to design
+      
+** Function DDBMS
+   Local data and distributed data dictionary 
+   Determine location 
+   DBMS translation between node 
+   Data consistency 
+   Global PK
+   Scalability
+   Security, concurrency, failure recovery
+
+** Commandments for DDB
+   Local site independence
+   Central site independence
+   Failure independence
+   Location transparency
+   Fragmentation transparency
+   Replication transparency
+   Distributed query processing 
+   Distributed transaction processing
+   Hardware independence
+   OS independence
+   Network independence
+   db independence
+* DBA
+** 4 functions 
+*** Capacity planning 
+**** Disk space 
+     Number of rows * average row width 
+     width of data type
+     // NUMBER STORAGE 
+     TINYINT 1
+     SMALLINT 2
+     MEDIUMINT 3
+     INT 4
+     BIGINT 8
+     FLOAT 4
+     DOUBLE REAL 8
+     // TIME STORAGE 
+     DATE 3
+     TIME 3
+     DATETIME 8
+     TIMESTAMP 4
+     YEAR 1
+     // CHAR STORAGE
+     CHAR(M) M*w M<255
+     BINARY(M) M
+     VARCHAR(M) L+1 for M<255 L+2 for M>255
+     TINYBLOB L+1
+     BLOB L+2
+     MEDIUMBLOB L+3
+     LONGBLOB L+4
+     ENUM 1|2
+     + other space require 
+       log 
+       control file 
+       dictionary
+**** Transaction throughput
+     peak and avg load 
+**** go-live and throughput the life of system 
+*** Performance improvement 
+**** affects database performance 
+     caching data in memory
+     placement of datafiles 
+     server clustering 
+     index to speed up -> large number of distinct values 
+     data type -> especially PK
+     program logic 
+     query execution plan 
+*** Security
+**** Threats 
+     Loss of integrity -> consistent 
+     Loss of availability -> allow authorized access 
+     Loss of confidentiality -> unauthorized access 
+**** Method 
+***** Access control 
+      DBA create user accounts for authorized user 
+      Audit: when tampering is suspected 
+             review the log to examine all accesses and operations during certain period of time 
+      /GRANT/ and /REVOKE/
+      Table level: 
+      Account level: 
+***** Views 
+      Hide db structure 
+      hide column in tables 
+***** Encryption
+      protect pswd 
+      authorized user be given key to decryption 
+***** SQL injection 
+      sanitize user input 
+      pass inputs as parameter rather than use this build SQL
+      white list for all valid value 
+*** Backup and recovery 
+    From human error and software malfunction 
+**** Type 
+     Physical: copy from disk 
+     Logical: by SQL script 
+     Online: live 
+     Offline: unlive 
+     Full: full copy 
+     Incremental: only the change 
+**** Decision 
+     Weekly full backup
+     Daily incremental backup
+**** Offsite backup 
+     disaster recovery 
+**** Ways for disk data lose 
+     Server replication: Master-slave -> one write many read 
+     Server cluster: -> many write many read 
+     RAID:
+     Offsite 
+** Data administrator -> management role 
+   data policies, procedure and standard
+   planning 
+   data conflict 
+   data dictionary
+   internal marketing 
+** Database administrator -> technical role 
+   analyze and design
+   select DBMS tools and vendor
+   install and upgrade 
+   tune performance 
+   security, privacy and integrity 
+   backup and recovery 
+  
+* NoSQL
+** Pros and cons relational db
+   + Pros 
+     flexible, suit any data model 
+     standard
+     SQL standard language
+     ad-hoc queries 
+     fast, reliable, concurrent, consistent
+   + Cons -> not suitable for OOL, not suitable for big data 
+     Object-relational impedance mismatch: support for OOL application 
+     big data 
+     clustered 
+** Features 
+   schema-less 
+   no relational model or SQL 
+   for distributed servers 
+   open-source 
+   eventually consistent 
+** Goals 
+   improve programmer productivity (OR mismatch)
+   handle big data 
+** Example 
+   MongoDB
+   Neo4J
+** Type 
+*** Graph db -> store entities and relationship, much faster 
+    Graph -> Neo4J
+*** Aggregate-oriented db
+    Document -> MongoDB: JSON 
+    Column-family -> Store like RDB, but each row contains diff columns
+    Key-value -> Key = PK, value = anything (Image, Json)
+    + Pros 
+      Store together
+      efficient storage on clusters 
+    + Cons 
+      hard to analyze across subfield of aggregate 
+** CAP theorem for Distributed data       
+   Consistency
+   Availability
+   Partition tolerance
+   AP: NoSQL
+   CA: Oracle 
+   When P is required, you can only choose consistency or availability
+** ACID vs BASE
+   Atomicity consistent isolated Durable 
+   Basically-Available Soft-state Eventual-consistency
+   Basically-Available: tolerant inconsistent
+   Soft-state: state may change during time for eventual consistency
+   Eventual consistent: given time stop input, be consistent. not checking consistency until move onto next when keep receive input 
+* Trend 
+** 4-V of big data 
+   Volume
+   Velocity
+   Variety
+   Veracity: uncertainty 
+** Cloud 
+*** DB as a service(DBaaS)
+    connect as required 
+    pay per usage 
+    + Advantage 
+      Simplifies setting up 
+      scaling up 
+    + Issues 
+      Data security 
+      Legal frameworks 
+      Large size of data movement 
+    + Vendors 
+      Amazon RDService 
+      MS SQL azure 
+      Google Datastore 
+      Amazon SimpleDB
+** OR impedance mismatch
+   OO allow complex data structure should be normalized 
+** NewSQL
+   NoSQL + ACID transaction
+** Hadoop
+   data-processing only, not operational db
+** In-memory db
+   store in memory not disk 
+   speed 
+
+   

@@ -1,0 +1,119 @@
+* Intro to functional programming 
+** Basis 
+   *equational reasoning*
+   replace same value expressions 
+** Functions 
+   order of definition is not ignored by Haskell 
+   which matches the usage 
+** Recursion 
+   #+BEGIN_SRC haskell
+     len [] = 0
+     len (x:xs) = 1+len xs
+   #+END_SRC
+** Church-Rosser theorem 
+   + C-R theorem is not applicable for imperative language 
+** Evaluation order 
+   define the evaluation order of program
+   may lead to different answer for same piece of code 
+   
+** Variables 
+   #+BEGIN_SRC haskell
+   
+   #+END_SRC
+   
+* Builtin Haskell type  
+** Type declaration is important 
+   #+BEGIN_SRC haskell
+     module Emptiness where
+
+     isEmpty :: [t] -> Bool
+     isEmpty [] = True
+     isEmpty _ = False 
+   #+END_SRC
+*** Exercise 
+    #+BEGIN_SRC haskell
+      module SumList where
+
+      sumList :: [Int] -> Int
+      sumList [] = 0
+      sumList (x:xs) = x + sumList xs
+    #+END_SRC
+*** Constrict type declaration
+    #+BEGIN_SRC haskell
+      -- => used to restrict type
+      module TypeRestrict where
+
+      typeRes :: (Num t) => [t] -> t
+      typeRes (x:xs) = typeRes x + typeRes xs 
+      -- with error 
+      -- do not know how to practice 
+    #+END_SRC
+** Parametric polymorphism 
+   using [t] to ignore the type of input arguments 
+* Defining Haskell types 
+** Enumerated type 
+   #+BEGIN_SRC haskell
+     data Gender = Female | Male
+     data Role = Staff | Student 
+   #+END_SRC
+** Card example 
+   #+BEGIN_SRC haskell
+     module CardExamp where
+
+     data Suit = Club | Diamond | Heart | Spade
+     data Rank =
+       Jack | Queen | King | Ace
+       deriving (Show, Eq, Ord) --Using deriving to using predifined functions 
+     -- TypeName = Definition, define a new type
+     -- TypeName = Typename Definition, define a type also a constructor 
+
+     data Card = Card Suit Rank
+     -- First Card is a type constructor, Second is data constructor
+     -- Same name for convievenence 
+
+     showrank :: Rank -> String
+     showrank Ace = "Ace"
+     showrank Jack = "Jack"
+     showrank Queen = "Queen"
+     showrank King = "King"
+
+     --instance Show Rank where show = showrank
+   #+END_SRC
+** Discriminated union types 
+
+
+* Logic and resolution 
+** Interpretation 
+   constant stands for an entity 
+   function stands for function from n entity to one entity
+   predicate of arity n stands for particular relationship between n entities
+*** 2 views 
+    1.function from all possible combinations of n terms to a truth value 
+    2.set of tuples of n terms, every tuple in this set mapped to true
+** Semantics 
+    set of logical consequences as ground atomic formulas 
+** SLD resolution 
+   given program, show this goal is true 
+   #+BEGIN_SRC prolog
+     q :- b1a, b1b.
+     q :- b2a, b2b.
+   #+END_SRC
+*** Resolution by SLD Tree 
+    the shape of tree 
+    order of resolution will lead to difference in efficiency
+*** Decisions in each step 
+    which goal to resolve 
+    which clauses matching selected goal to pursue 
+* Type Inference 
+* Monads
+  a type constructor that represents a computation 
+** Two types 
+   sequencing operation
+   M a -> (a -> M b) -> M b
+   identity operation, denoted return 
+   a -> M a
+** Example 
+   Maybe v = Just v | Nothing 
+   MaybeOK a = OK a | Error String 
+
+

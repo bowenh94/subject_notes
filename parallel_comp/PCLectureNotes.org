@@ -1,0 +1,1015 @@
+* Introduction 
+** Parallel computing 
+   + High Performance Computing > Parallel computing 
+     HPC also includes other aspects not concerned about parallelism: cache, algorithm, I/O, data structure 
+   + Require parallel architectures, not suit every problem, some time will hurt performance 
+** Parallel algorithms
+   + Sequential algorithm has exact version of parallel version which depends on the architecture of machine 
+     Parallel algorithms depends on parallel model 
+** Applications 
+   + Climate modeling 
+   + Plasma physics: 等离子
+   + Engineering design
+   + Bio-informatics and computational biology 
+   + GeophyBroadcastingsical exploration aBroadcastingnd geoscience 
+   + Astrophysics, material* Proj2 
+  tolerant small number of differential 
+  different in c-libraries linked during compilation 
+** Node 4 cpu 16
+   distribute job to 4 node 
+   inside each node mpi to 16 cpu, reduce communication time by shared memory 
+** different way of reduce to calculate the sum 
+   Using topology to change the communication model  science and nanotech 
+   + Defense: encryption and decryption 
+   + Fluid dynamics 
+   + Big data processing 
+** Broader approaches of parallel computing 
+   + Formalisms and mathematical logic 
+   + Programming models, complexity and architectures 
+   + Languages, compilers, explicit and implicit parallelism
+   + Environment, libraries and platforms 
+   + Problem domains and applications 
+** Parallel complexity analysis 
+   consider processor complexity as well as computational steps and memory 
+*** Three Aims from Krishnamurthy's guidelines 
+**** Notation that specifies complexity 
+     + Big O notation 
+       Exercise: compare the complexity 
+       O(1) constant 
+       O(n) linear 
+       O(log n) logarithmic 
+       O((log n)^c) polylogarithmic 
+       O(nlogn) linearithmic 
+       O(n^2) quadratic 
+**** Machine model standardizes the measure 
+***** RAM model(Random Access machine)
+****** Three concept 
+       random access memory: store information and accessible independently of its content 
+       central processing unit accesses RAM using Fetch-Decode-Execute-Writeback cycle 
+       I/O device
+****** Time consumption  
+       access memory is constant
+       address store same amount of information and each decode and execute takes constant time 
+****** Communication model 
+       interconnection network
+****** Computational model 
+       separate implementation from problem solving
+****** How to reduce complexity // assumption -> unbounded space, p(n) processors  
+       Architectural refinement with bounded space *do not* reduce the complexity of algorithms
+       But with unbounded space like n size problem ask for n processor, so p(n) is the number of processor to handle size n problem
+***** PRAM model(Parallel Access machine)
+      p identical RAM processors, each own a private memory, share a single large memory 
+      communication via shared memory 
+      cycle is performed synchronously 
+      one unit of time, each processor can read one global or local memory location, execute a single RAM operation, and write into one global or local memory location 
+****** 4 sub-categories relate to use of shared memory 
+       *EREW*: exclusive read, exclusive write 
+       *CREW*: concurrent read, exclusive write
+       *CRCW*: c             ,c
+       'ERCW': e             ,c        (not real, only for completeness)
+****** 4 category to deal with simultaneous writes 
+       *COMMON*: iff write same value 
+       *ARBITRARY*: randomly select value from one processor 
+       *PRIORITY*: lowest identifier can write 
+       *COMBINING*: function of conflict value written, require define a combining operation (Still one operation)
+       + Models listed in increasing order of "power"
+         any algorithms runs on EREW will run on a CREW
+         any algorithms runs on CREW will run on a COMMON CREW 
+         That's means the more powerful model can solve more complexity problem that less powerful model can not 
+****** Differ in power
+       + Any algorithm for CRCW in PRIORITY model can simulated by EREW with same number of processors,
+         time increased by O(log p)
+       + Any algorithm for PRIORITY can simulated by COMMON with no loss in parallel time provided sufficiently many processors available 
+**** refine measures for parallel computation
+***** Work and Size 
+      w(n) = t(n)*p(n)
+      work   steps processors
+      sequential running time is T(n)
+      total number of operations is size(n) that parallel algorithm undertakes 
+      T(n)<=size(n)<=w(n)
+***** Using fewer processors 
+      p2<p1
+      w2(n) = roof(p1/p2)*t(n)*p2
+      size do not change 
+      assign p1 processors' work to roof(p2/p1) processors 
+      but from small number of processors to large is harder 
+***** Brent's principle /Deal with less processors condition/
+      Problem size: x
+      with sufficient processor: t 
+      with p processors PRAM: t+(x-t)/p 
+
+      intuitively, if i-th step requires /xi/ operations, can be simulated in time 
+      roof(xi/p)<=xi/p+(p-1)/p
+      sum of /xi/ over /t/ time steps is /x/, get the result shown in upper 
+***** Optimality 
+      sequential runs in time /T(n)/
+      PRAM algorithm running in parallel time /t(n)/ with /p(n)/ processors is optimal if:
+      + t(n) = O(log^c(n))
+      + w(n) = p(n)*t(n) = O(T(n))
+****** Note
+       *1* parallel and sequential doing same work but achieves high degree of parallelism
+       *2* not optimal unless runtime is polylogarithmic!!!
+***** Speedup 
+      S(p) = T(n)/tp(n)
+***** Efficiency 
+      E = sequential complexity/parallel complexity * processors = T(n)/tp(n)*p = S(p)/p
+      if E converge to a constant, called optimal 
+      E = O(1)
+      means number of processor match the size of problem, so we achieve optimal 
+** Example of naive parallel sort 
+*** Merge sort with p(n)
+    sorting n numbers with p(n) processors
+    each processor sort n/p(n) numbers by most efficiency sequential algorithm is O(n/p(n)log(n/p(n)))
+    last step of merge require O(n) 
+    total time complexity is O(n) + O(n/p(n)log(n/p(n)))
+    Which is dominate part depends on n and p(n)
+*** Decision about number of processors and efficiency depends on size of the problem 
+** Feasibility
+   polynonimal number of time and polynonimal processors 
+   *highly feasible* polylogarithmic time and processor complexity polynonimal
+   *inherently sequential* feasible but no feasible highly parallel algorithm    
+*** Nick's class -> consist of highly feasible problems 
+    Time: polylogarithmic
+    Processors: polynonimal
+    NC is just like P problems for sequential computer
+*** Parallel computation thesis 
+    unlimited time to solve problem on TM can solved on *polynonimal* bounded time on parallel machine with unlimited processors
+    vice verse 
+*** Wall-clock speedup 
+    S(p) = exec time on 1 processor / exec time on p processors = ts/tp 
+    ts for sequential exec time 
+    include all overhead: communication delay, cache contention 
+    S(p) = Theta(P) : achieves linear speedup, also can achieve superlinear by specified algorithm avoid sequential search 
+*** Maximum speedup /Amdahl's Law/ -> deal with sequential part in parallel program 
+    limitation on serial part of the whole problem 
+    S(p) = ts/(fts + (1-f)ts/p) = p/(1+(p-1)f) = 1/f for large p 
+    ts for sequential running time 
+    f fraction can not parallelized 
+**** Applied 
+     f(n) is the sequential fraction 
+     Example: for sorting problem, f(n) is read data from disk 
+*** Gustafson's Law -> divide the problem into sequential part and parallel part
+    assume s+r =1 
+    serial part and parallel part sum is 1 
+    so the Maximum speedup is 
+    S(p) = p+(1-p)s
+*** *Two Laws applied depends on the problem*
+*** *Two Laws predicting the maximum ahcievable speedup for given problem* ** Main idea of parallel add 
+   1. use sufficient number of processors 
+   2. apply Brent's law to reduce number of processors which has same run time 
+   3. design a algorithm to apply the less processors condition 
+   *After these 3 steps, from sub-optimal to optimal algorithm*
+*** *Gus Law is more practical* 
+    Gus Law means no fix size of the problem 
+    So we can achieve high speedup by increase the performance on rest part, which means the parallelized part. 
+    Amdahl's Law limited on serial part and has cap on whole performance 
+*** Parallel add 
+**** Sub-optimal version 
+     sub-optimal problem is using n/2 processors
+     Steps: log(n)
+     Works: steps * processors = log(n)*n/2 = O(n)
+*** Find maximum number in a n array
+** Use extra space for EREW PRAM compare to CRCW PRAM 
+   just copy the data and write result in extra space 
+   Time penalty for simulation on lower PRAM is O(log(n))
+*** Simulating concurrent reading and writing
+    /Broadcasting/: concurrent read 
+    /reducing/: concurrent write 
+    
+* Prefix sum
+** Sequential 
+   size = N-1
+   depth = N-1
+   size/depth = 1
+   reduce depth by increasing size 
+** Upper/Lower 
+   Take 2 elements as a unit, 
+   divide problem into stages, first stage compute adj two elements 
+   next stage send result to your adj stage and do sum N/2 times 
+   and so on, 
+   O(logN)
+   require N/2 processors, so size is N/2logN, not optimal but efficient 
+** Odd/Even 
+   divide into half 
+   each operation add two level of complexity 
+   size if 2N-logN-2<N/2logN, but still not optimal
+** Optimal 
+   have n/logn processors 
+   n/logn to one processors 
+   divide /logn/ blocks 
+   calculate each block
+** Ladner and Fischer's 
+   hybrid the odd/even and upper/lower 
+   class of algorithms Pj(N) for j>0
+*** P_0(N) -> upper lower 
+    always doing last half part for UL has 1 step less than OE
+*** P_1(N) -> odd even
+    first half for smaller size 
+* Parallel architecture and APIs 
+  PRAM model is for computational usage, but hard to implementation, such as unbounded processors
+  Also constant time to access shared memory across all processors 
+  consider possible architecture solution for parallelism and additional complexity
+** PRAM consideration 
+   Consider N processors and M memory as shared variables 
+   PRAM implementation must specify how processors and memory location are arranged 
+** Flynn's classification of parallel computing 
+   Consider on two fundamental stream: instruction and data 
+*** SISD: single instruction single data 
+    IO <-> Control unit -instruction-> PE <-data-> M
+                <-----------instruction-------------
+*** SIMD: single instruction multiple data 
+    applications with lots of data parallelism
+    most cost efficient machine 
+    single control instruction broadcasts to many processing unit 
+*** MISD: NO computer widely using this 
+*** MIMD:
+    shared memory MIMD machine, standard processor and standard memory, connected via fast bus 
+    von Neumann is SISD machine, but can simulate SIMD by providing multiple input bus 
+    if processor can send different instruction to each ALU then the machine is MIMD
+** Schwartz's parallel machine class 
+   separate processors with memory 
+*** Paracomputer -> Symmetric multiprocessor (SMP) machine   
+    Shared memory: SMP symmetric multiprocessor
+    processors communicate via shared memory
+**** Feature
+     access data via global known address space 
+     hardware ensure all processors has same access to memory by using single address space 
+     program is easy 
+     closely approximate PRAM model 
+**** Example 
+     Intel Xeon
+     AMD Athlon MP
+     Opteron 200
+*** Ultracomputer -> Distributed shared memory  
+    Distributed memory: DSM distributed shared memory
+    processor access on own memory on constant time but remote memory takes longer 
+**** Feature
+     hardware only response for delivery message, also called message passing machine 
+     can scale up with less cost 
+     no need to maintain global consistency 
+**** Example 
+     IBM Scalable Power Series 
+** Uniformity of shared memory access 
+   depend on interconnection network
+*** UMA uniform memory access
+    equal access time to any given memory location 
+**** Feature  
+     all data store in cache 
+     caches can improve performance but need keep cache coherency 
+*** NUMA non-uniform 
+    access delay depends on location 
+**** Feature 
+     access to local memory is fast, but remote is slow 
+     cache problem exist for single address space system 
+*** COMA cache contents only, data migrate to request processor 
+** Coprocessors 
+   GPUs and Xeon PHi
+   coprocessor has own memory and processing element
+   program and data transferred between main memory and coprocessor memory
+** Implicit vs Explicit 
+*** Parallelism implicit/explicit
+    parallel algorithm explicit required or not 
+*** Decomposition implicit/explicit
+    pieces of parallel program explicitly defined or not 
+*** Mapping implicit/explicit
+    map to different processors 
+*** Communication implicit/explicit
+    communication between pieces of program
+** Thread model
+   suitable to run on a single machine
+   coprocessor consider as separate machine 
+   java apply transparency to run on GPUs
+** Process model for parallelism 
+   main thread -> create new threads as needed 
+   processes run on individual machine -> communicate by sending message, process number is global 
+*** Hybrid model 
+    communication + multi threads 
+** SPMD and MPMD
+   Single Program Multiple Data 
+   Multiple program Multiple Data 
+*** Usage 
+    categorize the way parallel program written, not architecture
+    Different program on master and slave consider as MPMD, otherwise is SPMD
+* Inter-connection network   
+** Types of network 
+*** Buses 
+    partial connected 
+    matrix connection 
+**** Multi-bus systems -> consider connection on memory, processors are always fully connected  
+     + full b-bus memory connection with p processors and m memories 
+       require b*(p+m) connections 
+     + partial 
+       require b*(p+m/g), g>1
+     + single 
+       require bp+m 
+**** Bus characteristics 
+     bus master: each node on bus has this 
+     bus request: request to use a bus 
+     bus grant or bus busy: response to req 
+     O(1/n) available bandwidth to each node 
+     minimum latency: O(1) without contention, ignore propagation delay
+*** Statics network
+    fixed point-to-point connections between modules in system, each is dedicated communication channel 
+**** factors effect latency 
+     number of hops 
+     bandwidth 
+     routing tech/algorithm
+**** Topological properties of static networks 
+     degree: d 
+     diameter: k, longest paths from arbitrary two nodes 
+     cost: c = dk
+     measurement of complexity of cost is O(dk)
+     for fully connected network: O(n), k=1, d=n
+     for ring network with 10 node: d = 2, k = 5, O(10), k = roof(k/2), d = 2, c = O(n)
+     for mesh network: d = 4, k = 6, O(24), k=i+j-2
+     for torus network: 
+     for hypercube network: n=2^t, k=t, d=t, O(log^2n) 
+     for tree network: k<=2log_d(n), twice the height of the tree, 
+***** Other properties 
+      bisection width: smallest number of edges to separate network into halves 
+      planarity: embedded network in plane without edge crossing 
+      symmetry: node topologically same 
+**** hypercube vs tree 
+     hypercube is hard to divide into two where tree is easy (cut edges to separate)
+**** Question: Optimal cost 
+*** CCC networks -> cube connected cycles, replace each node with cycle 
+    Degree is constant 
+    each cycle has constant degree and diameter, communication inside the cycle has less cost 
+    n=2^t hypercube, with replace has t2^t nodes, 
+*** Switching networks 
+    2 input, 2 output, connection based on configuration
+    complexity depends on number of switches    
+    Rearrange networks connection to connect one node with other which is not connected now 
+**** Crossbar network 
+     has complexity O(n^2)
+     nxn crossbar network consider as n-bus with single bus memory connection 
+     minimum latency is O(1), but complexity will be very high 
+     require n^2 switches 
+**** Clos network
+     N input N output
+     N = rn
+     require 2rnm+m*r^2 switches 
+     r*(n*m) -> m*(r*r) -> r*(m*n)
+     inside () is crossbar switch
+***** Blocking properties 
+      + m>=2n-1 
+        strict-sense nonblocking 
+      + m>=n 
+        rearrangable nonblocking 
+***** Complexity
+      when m=n 
+      complexity is 2Nn+2Nr < N^2 for choosen n and r, larger than specific value 
+**** Multi-stage Clos Network
+     replace rxr crossbar in center stage with Clos network will increase total stage from 3 to 5, but reduce switching complexity of center stage 
+**** Benes Switching network 
+     RN Clos network with m=n=2, r=N/2, no need for inside crossbar switch network 
+     stages = 2logN-1,
+     complexity = r*stages = NlogN-N/2
+     O(NlogN-N/2)
+**** Omega switching networks
+     O(nlogn)
+     logn stages 
+     n/2 switch modules 
+     minimum latency is O(logn)
+**** Omega switching network vs Benes switching networks
+     Omega is blocking, Benes is non-blocking 
+* Systolic algorithm 
+  consider the flow of data through an array of processing elements 
+  no access to global memory, but just to values from adjacent processing elements
+** Processor model 
+   input buffer -> local memory -> output buffer
+** Sorting 
+   with n processors array 
+   O(n), 
+   speedup O(logn)=O(nlogn)/O(n)
+** Matrix vector multiplication 
+   each row sequentially come to one processor
+   multiply by a element in vector 
+   from x1a11 to x4a14
+*** Using a ring network
+    continuously multiply and add option
+** Matrix matrix multiplication 
+   same idea, put matrix B's row into processor rows 
+*** Using ring networks
+    A move to left 
+    B move to upper 
+** Cannon's algorithm 
+   NxN Torus(ring) of processors
+   switch a(i,j) vertical: i switch
+   switch b(i,j) heirachical: j switch
+*** Algorithm  
+    1.Initially Pij begins with aij and bij
+    2.ai move to ai-1, bj move to bj-1
+    3.multiply and add 
+    4.move and repeat
+** Odd-even bubble sort 
+   switch between neighbours one different step 
+   odd step switch 1,2 3,4 ..
+   even step switch 2,3 4,5 ..
+** Shear sort 
+   Using mesh, similar with odd-even, but using mesh connection, not only linear connection 
+   sort each row, odd even row has different order
+   sort each column, with same order, from small to large
+   Using the sneak shape of sort in rows to avoid the same order sort problem
+   logn+1 phase
+   each row or column sort require sqrt(n) time using odd-even sort 
+   total time is sqrt(n)(logn+1)
+* Communication
+  shared memory do not explicitly require communication pattern, but underlying machine may require, as they may use distributed memory
+** Time 
+*** Time to send message 
+    startup time + message sending time 
+    tm = ts + tb*l
+*** Total parallel run time 
+    tp = t_comp + t_comm
+*** Speedup 
+    S = ts/tp = ts / t_comp + t_comm
+** Granularity 
+   granularity = computation time / communication time 
+*** Approach to increase granularity 
+    decreasing distribution 
+** Communication primitives 
+   same primitives: TCP to ensure parallel program is portable 
+   higher level abstraction: communication API like RMI provide communication subsystem
+   will incur performance loss 
+** Communication on MPI
+*** Common arguments 
+    Destination ID
+    Message type 
+    Data type and content 
+*** Blocking send 
+    send blocking and data in send buffer will persistent until other process received the message 
+*** Local blocking send 
+    when send is finished then return send 
+    when receive completed delete from sending buffer 
+*** Non-blocking send 
+    immediately return 
+    buffer data is possible 
+*** Non-blocking recv 
+    polling a device for I/O
+    wastes CPU cycle if called too many times without actual recv
+*** Unicast 
+    1 to 1
+*** Broadcast
+    1 to many 
+*** Gather 
+    many to 1
+*** scatter 
+    send many data each to a node 
+*** reduce 
+    many to 1 with function 
+*** Prefix 
+    send result of different math function over data item to each of nodes 
+
+   unicast is inefficient 
+   better broadcast: 1->2, 1,2->3,4 but bandwidth of network may not support this operation    
+* Sorting 
+** Sequential sorting 
+   worst for merge sort: O(nlogn)
+   average for quick sort: O(nlogn)
+   so w(n)=O(nlogn), with p(n)=n, best t(n)=logn
+** Rank sort 
+   by shared memory, each processor can access the array 
+   calculate the position of each element, and put it in correct position 
+*** By n processor 
+    by n processor find position of one element requires O(n), and no other operation is needed, 
+    efficiency : nlogn/n^2 = logn/n
+*** By n^2 processor 
+    pi,j doing comparation of ai and aj O(1)
+    reduction across i, compute bi, O(logn)
+    so sorting is accomplished in O(logn)
+    where w(n)=n^2logn, efficiency is 1/n
+**** Using CRCW
+     with concurrent write, reduction will finished in O(1)
+     so efficiency is nlogn/n^2 = logn/n
+     O(logn)
+** Compare and exchange 
+*** Balanced implementation
+    P1              P2
+    send(A,P2);     recv(A,P1);
+    recv(B,P2);     send(B,P1);
+    if(A>B)         if(A>B)
+    A=B;            B=A;
+    for merge sort, this operation will keep lower elements in P1 and larger elements in P2
+** Parallel merge sort and quick sort 
+   O(n) computational steps 
+   for merge, last merge two array of N/2 require this complexity 
+   for quick, hypercube can provide efficient implementation
+** Bitonic Mergesort 
+*** bitonic sequence 
+    unique peak and vale
+    switch elements in first half with last half, compare and switch a_i and a_i+n/2
+    then get two sub bitonic list 
+    then repeat compare and switch in two bitonic list 
+    O(logn)
+    just an operation to sort bitonic list 
+**** Problem 
+     have to start with bitonic list 
+*** bitonic sort 
+    1. build bitonic list for single element.
+    2. merge lists and sort with bitonic sort algorithm 
+    3. log(n) steps get sorted n elements list        
+**** Complexity 
+     O(log^2(n))
+     for build the bitonic list require logn stages, inside each stage require logn bitonic sort
+** Processor optimal parallel algorithm 
+   two sorted list, assign number to each of them by processor number 
+* Searching 
+** EREW searching 
+   N - processors; n - elements 
+   1.broadcast x to each processor require logN
+   2.each processor do search on n/N elements 
+   total complexity is logN+logn/N = O(logn), no improve 
+** CREW searching 
+   no broadcasting 
+   with modified binary search can achieve real speedup 
+*** Algorithm
+    each stage, array divided into N+1 by assign N subarrays check point to each processor, 
+    each processor check boundary and whether target in left or right side
+    then can find the target in 1/N+1 length subarray 
+*** analysis
+    O(log_N+1(n+1))
+    speedup = log_2(n)/log_N+1(n+1) = log_2(N)
+** CRCW searching 
+   using Priority policy to resolve conflicts in constant time 
+   A list no need to be unique list 
+* Parallel algorithms tech 
+** Classes of parallel algorithm 
+*** Embarrassingly parallel 
+    each processor get 1/N computation and independently done 
+*** Parametric 
+    require evaluating function f(x0..xn) for all possible combination 
+**** Example 
+     simulation of physical system 
+     simulated with large number of different starting conditions 
+     each simulation is independent
+*** Data parallel 
+    divide input data into completely independent part 
+    SPMD model is indicative of data parallel problem 
+*** Task parallel 
+    uses pipelining to process and achieve speedup
+    MIMD
+*** Loosely synchronous 
+    no global synchronization, but require communication between processors for next computation 
+*** Synchronous 
+    global synchronization after each step 
+*** Master/slave 
+    master scatter data and gather result 
+** Geometric transformations of image 
+   embarrassingly parallel, each pixel is independent
+*** Shifting
+    change coordinates of each pixel by given amount 
+    x' = x+deltax
+    y' = y+deltay
+*** Scaling 
+    multiplying each coordinate by some factor 
+*** Rotation 
+    x' = xcos+ysin
+    y' = -xsin+ycos
+*** Clipping 
+    eliminates points that not within some boundaries 
+*** Image smoothing
+    x' = average of 9 pixels 
+
+** Partitioning 
+   n^2 data, partition to P blocks 
+*** Square 
+    tcomm = 8(ts+n/sqrt(P)tdata)
+*** Row
+    tcomm = 4(ts+ntdata)
+** Mandelbrot set 
+   Embarrassingly parallel
+*** Problem 
+    equally divide region do not means equally divide computation 
+*** Dynamic load balancing 
+**** Centralised 
+     single master process holds tasks queue and handles division of tasks 
+**** Hierarchical and decentralised 
+***** Main master with mini master 
+***** Extension of above: tree structure
+***** Receiver-initiated and sender-initiated: 
+** Monte Carlo Methods 
+   put dart in unit square region 
+   x^2+y^2<=1 is roughly pi/4
+   all dart can be thrown in parallel 
+*** randomness problem
+    ensure all processor has same random seed 
+    x_i+1 =( ax_i + c ) mod m
+    a=16807 m=2^31-1
+*** Parallel random 
+    x_i+1 = ( ax_i + c ) mod m
+    x_i+k = ( Ax_i + C ) mod m
+    A=a^k 
+    C = c(a^k-1+a^k-2..a^0)
+** N-Body
+   N particles, p processors 
+   each processor with N/p particles 
+   each processor calculate center of mass of this cluster 
+*** Problem
+    particles assigned to processor will move out 
+    dividing space may lead to unbalanced load 
+    using cluster to calculate center of mass will reduce computation complexity
+*** Barnes-Hut -> find clusters of particles in N-body problem
+    divide the region by points inside the region -> using octree construct to subdividing cube into 8 smaller cubes 
+    if single region has multiple points, then partition 
+    compute the center of mass in subtree, and parents calculate the force from subtree's center of mass to itself 
+    first look at the root center of mass, by theta critiera judge if it's good enough to represent the root. 
+    if is not good enough, go to children and calculate the 
+**** compute force on each particle i 
+     for octree, if the children from same parent, they have force on each other, but they do not have force on their parent
+     the open angle determine a particle is inside or outside 
+*** Orthogonal recursive bisection 
+    divide the region by number of points, each children has half children.
+    like a balance tree 
+    problem: need to compute the line position 
+**** Problem with octree 
+     some processor may not obtain a particle 
+**** Method 
+     always divide space into balance groups 
+     change axis each time 
+     
+** Jacobi iteration 
+   Ax=b
+   D=A_diagonal 
+   R=A_remain
+   Dx=b-Rx
+   x=D^-1(b-Rx)
+   x^k+1=D^-1(b-Rx^k)
+*** Usage 
+    solve Laplace's equation 
+    d^2f/dx^2 + d^2f/dy^2 = 0
+    solution space is discretized into large number of points and finite difference method applied 
+*** Converge -> for sparse matrix 
+    as O(logn) steps 
+    with N processors t(n) = log(n)
+*** Gauss-Seidel relaxation 
+    in k-th iteration, using already calculated fk rather than fk-1, others using fk-1 result 
+*** Red-Black ordering 
+    divide the point into black and red, each color is not neighbouring to other. so we can do iteration parallel based on neighbour's result 
+*** Multi-grid 
+    computes solution on a coarse grid first, then progressively on finer grids 
+    logn level with size 2^tx2^t
+*** Centralised program termination 
+    master thread decide when to terminate 
+**** Task queue is empty
+**** every slave process is idle and has made a req for another task without any new task generated 
+*** Decentralised program termination 
+    problem is not all computations end with a particular solution 
+**** Application-specified termination condition exits throughout the collection of processes at time t
+**** No messages in transit between processes at time t 
+     but some message could in transit and not arrive yet 
+*** Acknowledgement message 
+    use req/ack message, each process has two states, active and inactive 
+**** Algorithm
+     1.Initiate as inactive, wait to receive task from another process 
+     2.receive first task from Pp, Pi set to active, Pp set to parent of Pi
+     3.Pi may send msg to other P and expects an ack
+     4.If receive task from other P, immediately send ack back
+     5.when ready to be inactive, send ack to parent 
+**** Inactive critiera 
+     local termination met
+     transmitted ack to all tasks 
+     received ack from every sent task 
+**** Note 
+     last condition ensure each process must inactive before its parent
+     termination structure is a tree
+*** Ring termination algorithms
+**** Considerations 
+     not allowed to reactive after reaching local termination -> single pass ring termination 
+     allowed to reactive -> dual pass ring 
+**** single pass 
+     1.P0 decide to terminate, send a token passed to Pi
+     2.when Pi recv token and has already terminated, pass token onward to Pi+1, otherwise wait for local termination condition then pass the token, Pp-1 pass token to P0
+     3.when P0 recv token, global termination 
+**** Dual pass 
+     1.P0 becomes white when it has terminated and generates a white token to P1
+     2.As before, the token passed through the ring from one process to the next when each process has terminated, but color of the token may be changed. 
+       If Pi sends a task to Pj and j<i(earlier in the ring), Pi becomes a black process; otherwise is white.
+       Black process will color a token black and pass it on, a white process will pass with its original color 
+     3.P0 recv a black token, it passes on a white token, if receives a white token, all process terminated. 
+*** Tree Termination Algorithm
+    apply the ring algorithm
+*** Fixed energy distribution termination 
+    1.all energy held by a single master process 
+    2.each process hand out any energy it has to other process when requesting a task be done
+    3.Idle processes pass energy back either directly to master or other process that req the work to be done 
+    4.One significant disadvantage is finite precision and adding partial energies may not equate to original energy 
+    5.one possible solution is to use a large enough integer to cope with number of divisions 
+* Matrices and Guassian Elimination 
+** Simple consideration 
+   with n processor, can assign each row to one processor 
+   with n^2 processor, can assign each result to one processor 
+   with n^3 processor, can using extra processor to achieve logn by sum reduction
+*** Problem 
+    overhead and not possible to have such number of processors
+** Recursive subdivision 
+   divide into four sub matrix and recursive until s=1
+** Gaussian elimination
+   solve x for Ax=b
+   multiple -a_j,i/a_i,i to eliminate one variable 
+*** Problem 
+    a_i,i = 0 
+    then means ith row do not contain this variable, swapped this row 
+    partial pivoting: can be done in O(logn) to swap all rows satisfy this 
+*** Parallel 
+    assign each row to one processor 
+    but each processor need to wait last row's result and eliminate variable based on this 
+    so idle time is high 
+**** Solution 
+     cyclic-striped partitioning, keep all processor busy for a greater period of time   
+* Hypercube and Embedding
+** Broadcasting in networks
+   broadcast(i,X)
+   for j from 0 to n/2-1
+     do t1 and t2 in parallel 
+       t1: (i+j mod n) send X to (i+j+1 mod n)
+       t2: (n+i-j mod n) send X to (n+i-j-1 mod n)
+     done 
+   done
+*** Mesh network
+    n rows and m columns, 1<=i<n, 1<=j<m, completes in O(n+m) round 
+    doing previews algorithm in rows and columns 
+*** hypercube 
+    n=2^t nodes, nodes numbered using t bit binary strings and two nodes are connected iff their numbers differ in exactly 1 bit position,
+    O(t) rounds
+    for i from 0 to t-1
+      for j from 0 to 2^i-1 in parallel 
+        node u+j send X to u+j+2^i
+      done 
+    done
+** Sum numbers stored in hypercube in O(t), and store sum in node 0 at the end 
+   two column of processors 
+   first from 0 to 2^t-1 -1, second from 2^t-1 to 2^t
+   
+   for i=t-1 down to 0 
+     for p=0 to 2^i -1
+       p+2^i send to p
+       p do sum 
+     done 
+   done
+   O(t) -> O(logn)
+** Prefix sum for hypercube in O(t^2) rounds 
+   broadcast in hypercube require O(t)
+   
+   if(t>1)
+     do t1 and t2 in parallel
+       t1: prefix(0,1,..2^t-1 -1)
+       t2: prefix(2^t-1,..2^t -1)
+     done
+     2^t-1 -1 send value to 2^t -1
+     broadcast(2^t-1, sum)
+     node in second column add this value to their current sum 
+   else
+     node 0 send to node 1
+     node 1 add sum 
+   done
+   
+   recursion is O(t), inside broadcast is O(t)
+   so O(t^2)
+** Optimal hypercube prefix sum 
+   O(t) steps, ai holds the initial data element for processor i 
+   use a cube instead of two lines 
+   
+   for 8 node hypercube, edge has logn=3 direction, each time do one direction sum, after logn steps all node store the result
+** Hypercube bitonic mergesort 
+   on 2^t nodes require t phase
+   O(t^2) in total 
+   t for generate bitonic list, t for bitonic sort
+** Embeddings into hypercube   
+   how one graph can be contained within another graph 
+   allows algorithms designed for a given graph to be executed on another graph without changing algorithm
+   *a hypercube on N=2^t nodes contains every N-node array as a subgraph*
+   any such array can be embedded into a hyper cube
+**** Terms 
+     wraparound: torus 
+**** Lemma 
+     N-node hypercube contains an N-node linear array as a subgraph for N>=4
+     proof: consider N from N/2, two N/2 circle can combine to a N cycle, 
+*** Gray codes 
+    Hamiltonian cycle in hypercube defined by Gray code 
+*** Cross product of graphs 
+    examples in Page18
+    node in each graph do combination as new node, if contains connected part, in new graph, this two node should connected
+**** Lemma 
+     For any k>=1 and t=t1+t2+..+tk the tD hypercube on 2^t nodes, can be expressed as cross product Ht=Ht1xHt2x..xHtk
+     proof: tD hypercube is product of H1 which is 1D of 2 node line.
+     so: 
+     + multidimensional array is cross product of linear array
+     + hypercube is cross product of smaller hypercube 
+     + linear array is subgraph of a hypercube 
+**** Lemma 
+     If G=G1xG2x..Gk and G'=G1'xG2'x..Gk' and Gi is a subgraph of Gi'(1<=i<=k), then G is subgraph of G'
+     proof: set d(v) is map G->G', so (u,v) is an edge of G, then (d(v),d(u)) is an edge of G'. 
+            since if (u,v) is edge in G, so there is a j such that (uj,vj) is an edge of Gj and ui=vi for all i!=j.
+            hence for same j, (d(uj),d(vj)) is an edge of Gj' and ..., thus (d(u),d(v)) is an edge of G'.
+     conclude: 
+     + 2^t1xx^t2..2^tk array is a subgraph of 2^t node hypercube when t=t1..tk
+     + any 2^t node array of any dimension is a subgraph of 2^t node hypercube 
+     + any M1xM2..Mkis contained in an N node hypercube
+       N= 2^(logM1+logM2+..+logMk)
+     figure for proof in Page13
+*** Containment of complete binary trees 
+    hypercube on N nodes does not provide embedding of an N-1 node complete binary tree 
+    consider on parity of hypercube node. if contains odd 1's in label then is odd parity, otherwise is even parity 
+    so hypercube has N/2 odd node and N/2 even node, and they should not connected to same parity
+    now consider on complete binary tree, each level is a kind of parity. so the number can not equal 
+**** N node doubly rooted complete binary tree(DRCB) contains in hypercube 
+     replace root with two connected node 
+     DRCB contains an N-1 node complete binary tree with dilation 2
+**** Dilation 
+     dilation of d for embedding means that each edge of the contained graph is stretched over at most d edges of the containing graph
+     so by definition 
+     DRCB by replace root has dilation of 1, N hypercube contains two N/2-1 completed tree
+     or by a generate a N-1 hypercube with dilation 2, one N-1 completed tree 
+     e.g. shown in Page14
+**** Alternative embedding of a tree 
+     leaf node of N, total number in this tree is 2N-1, but leaf node is unique N, can be embedded in N hypercube 
+     not each element in tree maps to one element in hypercube
+     edge in tree can map to a edge or node in hypercube 
+     internal node maps to left child
+     any computation on the tree uses only nodes on one level can be performed in one step on hypercube 
+*** General aspects of embeddings 
+**** Load 
+     dilation is from less node to more node 
+     load is from more node to less node, in less node graph, how many nodes from more node maps to one node in less graph 
+     time on embedding graph will be LT, L is load, T is original time 
+**** Expansion 
+     ratio of the number of nodes in the containing graph to the number nodes in the contained graph.
+     e.g. N/2-1 completed binary tree can be embedded in an N node hypercube with expansion N/(N/2-1)=2, load 1 and dilation 1
+**** Congestion 
+     maximum number of edges of the contained graph that are embedded using any single edge of the host graph
+*** Goal of embedding 
+    minimum dilation, load, expansion and congestion 
+
+* Extended parallel processing models
+** Overview 
+   PRAM model is good for thinking about parallel algorithms
+   complexity analysis of PRAM is mostly suitable for symmetric multiprocessor architecture(SMP) and less for message passing 
+   SMP is difficult to achieve at large scale, communication complexity needs to be included into model 
+   so should have a model take communication complexity into account in one complexity measure 
+** Module Parallel computer 
+   consists of N modules with M memory locations distributed uniformly over modules, fully connected 
+*** Complexity analysis 
+    each module has one processor, communication like PRAM but no shared memory 
+    module can access req to other module in O(1)
+    memory req received can be serviced in O(1)
+    best case: if all modules access different memory locations in a given parallel step, then memory access takes place in O(M/N) time, each module must service at most M/N req, if M=N O(1)
+    worst case: if all modules access same module then O(N), single module service all N req
+*** Simulating PRAM on MPC
+    Assume M=N, every module has single memory location 
+    for best case, k steps on PRAM will O(k) on MPC
+    for worst case, increase by a factor of N 
+    for avg case, assume memory access are uniformly distributed at random, the slowdown factor is O(logN/loglogN)
+**** Communication analysis 
+***** Balls in bins theorem 
+      if N accesses are made in total to N modules at random, exists a module that receives O(logN/loglogN) accesses, with high probability some modules get no access 
+      if m=n, then 0.37n is empty 
+** Bulk Synchronous processing model 
+   BSP abstract machine consists of a collection of p abstract processors, each with local memory, connected by an interconnection network.
+   this networks properties are time to do a barrier synchronization(l) and rate at which continuous randomly addressed data can be delivered(g)
+   BSP parameters are determined experimentally for each parallel computer 
+   Map Reduce directly modelled by BSP
+*** Reason for BSP
+    provide a simple cost function for analyzing the complexity of algorithms
+    efficiently simulate several other models of parallel computation 
+*** Supersteps 
+    computation where each processor uses only local held values 
+    global message transmission from each processor to any subset of the others 
+    barrier synchronization 
+*** Barrier Synchronization 
+    take place at regular interval of time L, controlled by program 
+    L is constrained below by minimum time taken to do a barrier synchronization
+    L is constrained above by program, larger L larger granularity
+    Larger L harder to optimal, as harder to assign work to processors until they finished their L time work 
+    after each L, if all finished, then synchronization, otherwise continuous this supersteps for another L
+**** Assumption 
+     communication and sync via a router, so need good router algorithm 
+     require network guarantees like maximum message latency are required in this case 
+**** Why p threads per processor 
+***** Example bitonic merge sort 
+      with log^2n for n processors and p elements if p=n
+      for p=nlogn, p/nlogp = lognlog^2(nlogn)
+***** By using BSP
+      if p=n, access probability is logn/loglogn, so run time is logn/loglogn*log^2n
+      if p=nlogn, so run time is logn/loglogn * lognlog^2(nlogn) = log^2(nlogn), matches the PRAM for larger list to sort 
+**** Parallel slackness 
+***** Definition 
+      if program written for p threads run on n processors and p>>n, p=nlogn, then there is some parallel slackness 
+      slackness allows work, including communication costs, to be distributed and balanced more easily, than for p=n or p<n
+***** Proof 
+      for p=n, access probability is logn/loglogn, 0.37 processors will be idle, cost optimal outcome would have machine servicing n memory access using n processors in O(1)
+      for p=nlogn, each processor will get no more than 3logn, implemented by network in optimal time bound O(logn)
+      using balls in bins, m=nlogn
+***** note 
+      in a superstep, BSP machine simulates one step of each thread 
+      then p memory access will be spread evenly, about p/n processor, then will be able to execute this super step in optimal O(p/n) time with high probability
+*** Computational and communication analysis 
+    1/g -> bandwidth
+    l -> sync time 
+    assume a program with S superstep, then ith execution time is 
+    wi+ghi+l
+    wi is work time, hi is longest message, 
+    so total time is
+    W+gH+lS
+*** Balancing computation and communication: Broadcast example 
+    m memory location spread uniformly over p threads 
+    one copy to each of n processors can be accomplished in log_d(n) supersteps using d-ary tree 
+    each superstep, each processor transmit d copies to distinct processors : dglog_d(n)
+    after communication, elements replicated m/n-1 times in each processor 
+**** Objective 
+     find d to balance computation and communication cost, at least granularity should not exceed 1
+     dglog_d(n)=m/n for d,
+     solve d=m/gnlogn*log(m/gnlogn)
+     and L=gd for super step size to achieve O(m/n)
+*** Matrix multiplication 
+    mxm matrix, using n<m^2 processors 
+    so each processor do (m/sqrt(n))^2 sub matrix calculation
+    should recv m/sqrt(n) rows or columns from A and B, each row or column contains m elements 
+    so 2m^3/n additions and multiplication and receive 2m^2/sqrt(n) message
+    as n<=m^2, so 2m^3/n>=2m^2/sqrt(n)
+    consider each processor get uniformly distributed elements of A and B, 2m^2/n per processor, each processor replicates each of its elements sqrt(n) times and sends them to sqrt(n) processors need this data 
+    the number of transmission per processor will indeed be 2m^2/sqrt(n)
+    for BSP model, O(m^3/n) achieved provided g=O(m/sqrt(n)) and L=O(m^3/n)
+    only one super step, with g and H=2m^2/sqrt(n), W=2m^3/n. so total O(m^3/n)
+
+
+* -------------------------
+
+* Review lectures 
+** Intro 
+   write pusedu algorithm 
+   models 
+   all examinable 
+** Prefix sum 
+   tt problems 
+   analysis of algorithm 
+   optimal prefix sum
+** Architecture
+   SIMD/MIMD machine 
+   algorithm matters 
+** Interconnection 
+   switching networks 
+** Systolic 
+   write down algorithm 
+** Communication 
+** Sorting 
+   combine bitonic merge sort with switching networks 
+** Searching 
+** Techs
+   know the partitioning or sth like that
+   the approaches not equations 
+   may problems include details of techs 
+** Mat multiply and Gaussian elimination 
+** Hypercube 
+   broadcasting 
+** BSP
+   computation models 
+   parameters and reason to use BSP 
+   super step and involve, barriers and understanding of complexity 
+** Comments on code 
+   not actual write code 
+   but algorithm in psudo code 
+** Xeon phi question 
+   
+* Exam 
+  show how to: draw diagram is acceptable 
+  optimal: show complexity 
+  definitions: remember them
+  half is in slides, other half is solve problems in exam
+
+** Q1
+   a. optimal must have 
+      + runtime 
+        O(log^c(n))
+      + work 
+        w(n) = p(n)t(n) = O(T(n))
+        no more work than sequential 
+   up to now, get 4 marks 
+   b. 
+   1. t+(x-t)/p
+      derive the Brent's principle 
+   2. O(n) operations and O(logn) time 
+      t = logn 
+      logn + (n-logn)/p = O(logn)
+      p = n/logn
+      w(n) = n/logn * logn = O(n)
+      so with n/logn processors, can be optimal 
+      
+** Q2 
+   a. draw a array to show 
+      optimal prefix sum: logn length blocks, n/logn processors
+      steps1: break array into n/logn sub-arrays 
+      steps2: low level sum can using odd-even sum that takes O(logn) steps 
+      steps3: steps1 and 2 can take O(logn) in total, and w(n) is still T(n).
+              so the algorithm is optimal 
+      comments: no need to write odd-even algorithm 
+                show this algorithm can run on EREW
+   b. ring termination from Techs lecture 
+** Q4 c 
+   bitonic merge sort has same number of steps 
+   and bm is just like a comparator do compare and switch operation 
+   so apply this on this problem 
+   using switches to achieve bitonic merge sort 
+** Q4 d 
+* TT review 
+  know SUM(i^2) = n(n+1)(2n+1)/6

@@ -1,0 +1,425 @@
+* Rate of growth
+  - all three notations allow a constant c included in the equation
+** big O notation
+   - upper bound of complexity
+** big theta notation
+   - same rate as algorithm complexity
+** big omega notation
+   - lower bound of complexity
+* Brute force 
+** Selection sort
+   #+BEGIN_SRC python
+     def SelectSort(unsorted_array):
+         min = 0
+         for i in range(0,len(unsorted_array)):
+             for j in range(i,len(unsorted_array)):
+                 if unsorted_array[i]>unsorted_array[j]:
+                     min = unsorted_array
+                     unsorted_array[i]=min
+         return unsorted_array
+   #+END_SRC
+   - properties of sorting algorithm
+     in-place: no need additional space for sorting
+     stable: the input could be variable data, integer, float ..
+     input-sensitivity: for select sort, each sorting process in a for loop, so whether the input array is sorted or not, the complexity will not change
+** brute force string match
+** closet pair
+   recursive approach maybe a better way to solve the problem
+* Recursion
+  - core part of apply a recursion algorithm is find the base case, and 
+    put the base case as stop point and run the result and former steps 
+    when it meet the base case
+** Factorial numbers
+   - efficient in tree algorithm.
+** fibonacci numbers
+   #+BEGIN_SRC python
+     def fibonacci(n):
+         if n == 1 :
+             return 1
+         if n == 0 :
+             return 0
+         return fibonacci(n-1)+fibonacci(n-2)
+   #+END_SRC
+** Tower of Hanoi
+   #+BEGIN_SRC python
+     def HanoiTower(height, fromT, toT, medT):
+         if height >= 1:
+             HanoiTower(height-1, fromT, medT, toT)
+             print("move a disk from "+ fromT + " to " + toT)
+             HanoiTower(height-1, medT, toT, fromT)
+
+   #+END_SRC
+   consider the n-1 step, there should be m-1 disk on the tower, and move 
+   the smallest one on to it. and n-2 step is move the second smallest 
+   on to tower already have m-2 disks, and follow the rules that no larger
+   disk on a smaller one.
+
+** Coin change problem
+   #+BEGIN_SRC python
+     # ways to get a $4 from 5,10,20,50,100
+     def way(amount, set_array):
+         # if get a 0 in amount, means we already get one solution
+         if amount == 0 :
+             return 1
+         # if get a number is negative, means this is not a solution
+         if amount < 0 :
+             return 0
+         # prevent the array is null
+         if set_array == null :
+             return 0
+         # randomly select a item in set_array
+         d = set_array[random(0,len(set_array))]
+         #return the count of possible solution
+         return way(amount - d, set_array) + way(amount, set_array.drop(d))
+   #+END_SRC
+* Graph
+** Depth first search
+   - 
+** Breadth first search 
+   - 
+** topology search
+   - directed graph without circle
+   - in a sequence representation of logical order
+
+* Decrease and conquer by a constant
+** Topological sorting 2
+   - Repeatedly select random 'source' in graph, list it and move it from graph
+     But need to scan the graph for the source 
+** Selection sort (not part of D&C)
+   #+BEGIN_SRC python
+     for i in range(0,len(array)-1):
+         for j in range(i,len(array)):
+             if array[i]<min:
+                 min = array[i]
+                 index = i
+   #+END_SRC
+** Insertion sort 
+   #+BEGIN_SRC python
+     A = [5,7,2,6,9]
+     for i in range(1,len(A)):
+         v = A[i]
+         print(v)
+         j = i -1
+         print(j)
+         print(A[j])
+         while j >= 0 and v < A[j]:
+             A[j+1] = A[j]
+             print("loop")
+             j  = j-1
+         #print(A)
+         A[j+1] = v
+         print(A)
+   #+END_SRC
+   complexity is n^2/2
+*** Shell sort - efficient way of insertion sort for large number of data
+    in place 
+    not stable
+    - start by a large k
+      repeat with smaller k
+    - Reduce the loop operation inside while
+      From large k to small, the array is almost sorted, so inside a while loop, the number of basic operation is reduced
+* Decrease and conquer by a factor
+** Binary search 
+   - without recursion
+     #+BEGIN_SRC python
+     
+     #+END_SRC
+** Russian Peasant multiplication
+   - multiple 2 large number, n and m
+** Finding median of array without sorting 
+   = Find the kth smallest item in array
+   Randomly find a item in array, divide the array into two subarrays, larger than this item or smaller
+   Basic operation: swap values
+*** Lumuto Partition
+    #+BEGIN_SRC python
+    
+    #+END_SRC
+*** Quick Select
+    #+BEGIN_SRC python
+    
+    #+END_SRC
+** Interpolation search
+* Sorting with divide-and-conquer
+** Master theorem
+   T(n) = aT(n/b) + f(n)
+   f(n): time spend on divide the problem
+   
+** Merge sort
+** Quick sort
+** Tree traversal 
+** Closest pair
+
+* More divide and conquer
+** Binary tree
+   empty tree has height of -1 
+   - complete tree -> full tree
+     each level filled but the last 
+   - full tree 
+     each node has 0 or 2 children
+   - Traveral 
+     Preorder: root -> left -> right
+     Inorder: left -> root -> right
+     Postorder: left -> right -> root
+     Level order: level by level, start from root
+   - algorithms
+     Height search 
+     #+BEGIN_SRC python
+       def height(T):
+           if T is empty:
+               return -1
+           else:
+               return max(height(T.left),height(T.right))+1
+     #+END_SRC
+     Inorder traversal 
+     #+BEGIN_SRC python
+       def inorder(T):
+           if T != 0:
+               inorder(T.left)
+               visit(T)
+               inorder(T.right)
+     #+END_SRC
+     Postorder traversal
+     #+BEGIN_SRC python 
+     
+     #+END_SRC
+     Preorder with stack
+     #+BEGIN_SRC python
+       stack = []
+       stack.append(T)
+       if len(stack != 0):
+           root = stack.pop()
+           visit(root)
+           if root.right != empty:
+               stack.append(root.right)
+           if root.left != empty:
+               stack.append(root.left)
+     #+END_SRC
+     Level order with queue
+     #+BEGIN_SRC python
+     
+     #+END_SRC
+** closet pair problem
+     by brute force, the complexity is Theta(n^2)
+     by divide and conquer the complexity is Theta(nlog(n))
+     - Steps:
+       sort point by X, store in array byX
+       same to Y, get byY
+       divide the plane into sub-plane by mean value of x or y
+       find minimum distance in each sub-plane
+       find the minimum distance for point in range of (x-xmean,x+xmean)
+       the global distance is the minimum distance of last two steps.
+     - algorithm
+       #+BEGIN_SRC python
+         X = [1,4,6,7,5]
+         xMean = X.mean()
+         Y = [4,6,2,6,8]
+         yMean = Y.mean()
+         # Actually, this should be a pandas dataframe
+         dotGraph = {'x':X,'y':Y}
+         byX = dotGraph.sort(by = 'x')
+         byY = dotGraph.sort(by = 'y')
+         # The plane divided by xMean into two plane, so calculate the minimum distance in both sub-plane
+         for p in dotGraph[x>xMean]:
+             for op in dotGraph[x>xMean]:
+                 if p!= op:
+                     dR = findMin(distance(p,op))
+         for p in dotGraph[x<xMean]:
+             for op in dotGraph[x<xMean]:
+                 if p!= op:
+                     dL = findMin(distance(p,op))
+         dmin = min(dL,dR)
+         # dmin is not global minimum now, the closet pair could exist near xMean, so for point located in range(x-dmin,x+dmin), find their distance, compare to dmin, now can get the global minimum.
+         med = d[x>x-dmin and x<x+dmin]
+         for p in med:
+             for op in med:
+                 if p!= op:
+                     medMin = findMin(distance(p,op))
+         globalMin = min(dmin,medMin)
+
+       #+END_SRC
+
+* Priority queues, Heaps and Heapsort
+** Heap
+   Like a sorted binary tree,(二叉树)
+   Parents are smaller than children
+   - injecting:
+     add the new item at the end
+     if the new item is smaller than parents, then climb up.
+   - Max heap, min heap
+   - Turn an array into a heap, bottom-up
+     The complexity of this is O(n), cause for worst case do not need to swap the node from bottom to top, which lead to complexity of O(nlogn). 
+     #+BEGIN_SRC python
+       # Already has a heap from the array, but randomly generated
+       # Start from right most value in array, with indicate the right most of original heap from the array.
+       # The original array start from the root, H[1] = root; end with the right most item, sort in level order.
+       # When finish this algorithm, H should be a max heap store in the same array.
+       def heapBUCons(H):
+           for i in range(n/2,1):
+               k = i
+               v = H[k]
+               heap = False
+               while(!heap and 2*k<=n):
+                   #j start from n
+                   j = 2*k
+                   if j < n:
+                   # check for more than one child 
+                       if H[j]<H[j+1]:
+                           # the left child is less than right child
+                           j = j+1
+                   if v >=  H[j]:
+                       # v is the parent node, if v larger than H[j], means half of the heap has been sorted.
+                       heap = True
+                   else:
+                       # parents is less than the children, swap them.
+                       H[k] = H[j]
+                       k = j
+               H[k] = v
+     #+END_SRC
+     for a full binary tree, n = 2^h+1 - 1, so:
+     O(n) = 2^h+1 - h - 2 < n
+     h is the height of heap
+   - Ejecting 
+     - Max element:
+       put the root to the end of the array, and slim the array size into n-1, so the max element can not be access
+       Swap the root with the end element
+       Sort the heap with sift down the new root to right position 
+       O(logn)
+       So by heap ejecting operation we can get a sorted array with complexity of O(nlogn)
+   - Heapsort
+     1. Turn H into a heap
+     2. Apply eject operation n-1 times
+     In-place
+     not stable
+     
+* Transform and conquer
+  - Binary search tree: in order traversal
+    Insert an element k is equals to search for k.
+* Balanced tree
+** AVL tree
+  - Balance factor of each element in a tree will no larger than 1, acceptable value is -1, 0, and 1.
+  - left rotation: when the parent node get balance factor of -2.
+    To perform a left rotation we essentially do the following:
+    1. Promote the right child (B) to be the root of the subtree.
+    2. Move the old root (A) to be the left child of the new root.
+    3. If new root (B) already had a left child then make it the right child of the new left child (A). Note: Since the new root (B) was the right child of A the right child of A is guaranteed to be empty at this point. This allows us to add a new node as the right child without any further consideration.
+  - right rotation: when the parent node get balance factor of 2.
+  - By inplementation, First determine the value of root node, 
+    then determine to apply l-rotation or r-rotation. 
+    Then check the child of root node, find this value is positive or negative, then determine to move which node to the root.
+  - balance factor can guarantee the depth of AVL tree with node n is log(n)
+** 2-3 trees
+   - in a tree node can store more than 1 node 
+     2 node: left smaller than n, right greater than 
+     3 node: left smaller than m, middle between m and n, right greater than n
+   - 2-3 tree allows 2 node and 3 node in the tree. 
+     the insertion will also calculate the number of element in a same node, to make sure the node is no larger than 3.
+* Time and space tradeoff
+** Sorting by counting 
+   find the frequency of each number in unsorted array, do Fibonacci on this freq array, then can get the position of each number.
+   Create another array space to store the frequency of each item
+   After got two array, loop for unsorted array, put it in the index shows in Occ.
+   All the time complexity is *O(n)*, contains only linear scan.
+   No key-to-key comparison -> *Omega(nlogn)*
+   + Horspool's String search algorithm
+     start from the end of the pattern
+     create a shift table contains {1stL:length-1,2ndL:length-2,3rdL:length-3...}
+     when the last letter in a pattern match the letter in pattern, move steps from the map
+     when do not appears in pattern, move the length of patter.
+     Same as *Boyer-Moore Matching*
+     + problem
+       when a letter is duplicate in pattern
+     + solution 
+       use right most value to construct the shift table 
+     + code 
+       #+BEGIN_SRC python
+         pattern = "BAGBAR"
+         # Generate the shift table
+         shiftTable = {}
+         for l in pattern:
+             shiftTable[l] = pattern.index(l)
+             # find the right most index of l
+
+       #+END_SRC
+     + performance 
+       worst case: m*n
+       but on average is linear for English and fast than brute-force 
+       /Knuth-Morris-Pratt Automaton/ not examinable
+
+* Hashing
+** Hash function
+   function h:Key -> {1...m}
+   e.g. mod: store a string "Key", mod it by a /prime/ number then the result should be the position of this string in hash table
+   for original hashing mod function, get the number of String just by map the char to its position
+   but the value could be incredible large. 
+   key value could be: position * 32^(position+5) + position * 32^(position+5) ... mod number
+   + solution 
+     *Horner's Rule*: ignore the 32 part, just take the presentation of 5 bit binary number 
+** Collision 
+   from the /value/, calculate /h(value)/, the result is /hash address/
+   *Load factor*: alpha = n/m, n number of items stored 
+   /number of probes/ in successful search = 1+alpha/2
+   /number of probes/ in unsuccessful search = alpha
+** Open-addressing methods(closed hashing) -> deal with collision 
+   Load factor alpha <= 1
+*** Linear probing 
+    In case of collision, store in next cell, then next, and so on.
+    when get to end, wrap around.
+    - /number of probes/ 
+      successful = 1/2 + 1/2(1-alpha)
+      unsuccessful = 1/2 + 1/2(1-alpha)^2
+    - analysis: when alpha>0.9 -> 
+      advantage: Space-efficient
+      disadvantage: Clustering->put value every where. Deletion is impossible->recomputing the whole hash table.
+*** double hashing
+    choose another hash function: s(k)
+    when h(k) is occupied, try h(k)+s(k), then h(k)+2s(k)
+*** Rabin-Karp String search
+    calculate hash of string, compare with substring in large string. 
+    if found equal, so perhaps will exist. do normal search then.
+    shift by one char, do not need to do hashing on whole new substring, because only one remove and one addition, so:
+    /hash(s,j+1)=(hash(s,j)-a^m-1(chr(s_j)))*a+char(s_j+m)/
+** Drawbacks of hashing
+   traversal all items 
+   hard to predict volume of data, rehashing is expensive 
+   deletion is impossible, unless use separate chaining
+** When to use hashing
+   information retrieval
+   
+* Dynamic Programming 
+  simple example: Fibonacci
+** Coin-Row problem 
+   *input* row of coins
+   *goal* find the largest possible sum
+   *restrict* no adjacent coins 
+   *function* S(n)=max{S(n-1),S(n-2)+vn}
+              S(0)=0, S(1)=v1
+   #+BEGIN_SRC python
+     def coinrow(C):
+         S=[0 in range(len(C))]
+         S[1] = C[1]
+         for i in range(2,len(C)):
+             S[i] = max(S[i-1],S[i-2]) + C[i]
+         return S[len(C)]
+   #+END_SRC
+** Knapsack problem
+   *input* items with /weights/, /value/ 
+   *goal* find most valuable items
+   *restrict* bottle with /Cap/
+   *function* K(i-1,w)->solution excludes item i
+              K(i,w)->solution include item i ->K(i-1,w-wi)+vi
+              K(i,w) = 0 if i=0 or w=0
+              K(i,w) = max(K(i-1,w),K(i-1,w-wi))+vi, if w>=wi
+                       K(i-1,w),                     if w<wi
+   *output* generate a matrix of number of items and cap, contains value of knapsack
+   *complexity* O(nW) for both time and space 
+*** Another solution with memoing(not examinable)
+    store the value in hash table rather than in matrix
+    ignore some value is useless compare to former one.
+    
+* Warshall and Floyd: Dynamic programming and Graphs 
+** Transitive closure of DG -> Warshall's Algorithm
+   An edge (a,z) is transitive closure iff a path form a to z 
+   Using each single node as stepping stone, find edge to z, then using 2 nodes, and so on to find all path from a to z 
+   a matrix can represent all the path from a to z, then we can consider a 0-mat as initial state, and the path-mat as final state. Then do state space function 
+   
+** Shortest path in WDG -> 

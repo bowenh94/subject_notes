@@ -1,0 +1,153 @@
+* String Search
+** approximate string search and matching
+- exact search is not knowledge tech, find the closest match is.
+** common applications
+- spelling correction
+  need a notion of dictionary
+  list of entries that are "correct"
+- approaches 
+  break into substrings that we wish to match
+  interest depends on the person who wrote the original string
+- computational genomics
+  find a sequence occurs in a larger sequence
+  possibly with errors
+  errors may in source or target
+** methods
+- insert, delete and replace the letter in the given string, then can find the changed string in target
+*** neighbours
+    givenMark set
+    string x, alphabet size is 
+    - generate all variants of given string at most k changes
+      check all variants whether exist in dictionary 
+     dictionary = all the results are returned 
+    - for 1 edits: alphabet size * length of w, is the roughly neighbours
+      for k edits: alphabet size^k * length of w^k 
+    - could be suprisingly fast: 
+      alphabet size is constant and small, k is usually small.
+*** edit distance 
+    - match +1, delete -1, insert -1, replace -1 -> global distance
+      calculate the scores 
+      but is not a true distance. 
+    - match 0, insert +1, distance +1, replace +1 -> levenshtein distance
+      levenshtein distance: calculate the distance from a string into another
+      minimize distance is the best, closest to result.
+    - score method is the key point of matching problem.
+      to find the char which should be replaced, e.g. faxing -> facing or faking
+      the distance in keyboard should be the most consideration. so 'c' have the minimize value.
+    - dynamic programming
+      e.g. shortest path algorithm.
+           shortest path is the best way from destination to starting point.
+           recursive programming to find the best way to neighbours
+           
+**** Global Edit Distance: Needleman-Wunsch Algorithm:
+     - for global distance, each operation are take into count, so when the length of 
+       two strings are quit different, such as genomics problem, the value of initial 
+       matrix would be extremly large. 
+     #+BEGIN_SRC python
+       #calculate the levenshtein distance, when insert, delete and replace, distance+1; when match, distance hold still.
+       #by compare the char for each index, and take the minimize value of last operation + matching result, former matching result + cost;
+       #when matching, last operation + matching result hold still, where former matching result + cost is higher, so the minimum number of this is the best match result, whether this result is from row or column. this could achieve the approx matching and keep the result meaningful.
+       #one problem about this code block: when the len of two string is not equal
+       #will incur a problem about index of value matrix out of range.
+       #each operation insertion, deletion and replace cost 1 value, replace can be described as mismatch
+       #values in matrix can come frome all its 3 neighbours, so choose the minimum value is the best decision
+       def Needleman_Wunsch_al(fromString,toString):
+                  #set operation cost
+                   insertion_cost=1
+                   deletion_cost=1
+                  #if is equal, return match
+                   if fromString==toString:
+                       return True
+                  #else define a matrix to store the value of operation
+                   else:
+                       A=[[0 for k in range(0,len(fromString)+1)] for j in range(0,len(toString)+1)]
+                       for j in range(1,len(toString)+1):
+                           A[j][0]=j*insertion_cost
+                       for k in range(1,len(fromString)+1):
+                            A[0][k]=k*deletion_cost
+                       print (A)
+                       for j in range(1,len(toString)+1):
+                           for k in range(1,len(fromString)+1):
+                               A[j][k]=min(A[j][k-1]+deletion_cost,A[j-1][k]+insertion_cost,A[j-1][k-1]+(fromString[k-1]!=toString[j-1]))
+                      #return the distance from fromString to toString
+                       print(A)
+                       return A[len(toString)][len(fromString)]
+
+       Needleman_Wunsch_al("crat","arts")    
+     #+END_SRC
+     - complexity is 
+**** Local Edit Distance: Smith-Waterman Algorithm:  
+     - in local distance calculate, if two chars are not match, maintain in 0 and only if two chars are matched, value +1.
+       final value of match is the largest item in value matrix.
+     - diff from global distance, when two strings have diff len, will not lead to a large 
+       value in matrix. that's why local distance more suitable for genomics problem.
+     #+BEGIN_SRC python
+       def Smith_Waterman_al(fromString,toString):
+           #set operation cost
+           insertion_cost=1
+           deletion_cost=1
+           #if is equal, return match
+           if fromString==toString:
+               return True
+                         #else define a matrix to store the value of operation
+           else:
+               A=[[0 for k in range(0,len(fromString)+1)] for j in range(0,len(toString)+1)]
+               for j in range(1,len(toString)+1):
+                   A[j][0]=0
+               for k in range(1,len(fromString)+1):
+                   A[0][k]=0
+               print (A)
+               for j in range(1,len(toString)+1):
+                   for k in range(1,len(fromString)+1):
+                       A[j][k]=max(0, A[j][k-1]+deletion_cost,A[j-1][k]+insertion_cost,A[j-1][k-1]+(fromString[k-1]!=toString[j-1]))
+               #return the distance from fromString to toString
+               print(A)
+           return A.max()
+
+     #+END_SRC
+**** N-gram distance -> find the best matching for substrings
+    - n-gram: substring of length n
+      e.g. 2-gram of 'crat': #c cr ra at t#
+                     'cart': #c ca ar rt t#
+                     'arts': #a ar rt ts s#
+           2-Gram distance between 'crat' and 'cart':
+                     |G2(crat)|+|G2(cart)|-2*|G2(crat)nG2(cart)|
+                     = 5+5-2*2=6
+                                   'crat' and 'arts':
+                     =5+5-2*0=10
+    - useless for long strings and/or very small dictionary.
+      for small alphabet, even take order into account, we can get a 16 combination of 4 char, so when 
+      this alphabet apply to the long string, result would be large for almost each string.
+**** Genomics
+     - short string to compare against many long strings (1K ~ 100K, the number simulate the nuceotide sequence problem)
+     - Neighbourhood search:
+       assume allow 10 errors and alphabet is 4 or 20 chars
+       roughly 4^10 * 1000^10 possible neighbours...
+       impossible to solve
+     - Global distance: 
+       1K chars, 1000K chars
+       complexity = 1K*1000K -> for value matrix calculation, each item in the matrix need 1 multiply operation
+     - local distance: 
+       for 1K chars and 1000K chars problems -> good idea
+       for 10K chars and 1G chars: no memory for store such a large matrix
+       need more efficient algorithms: BLAST, FASTA
+     - N-Gram distance:
+       for large N could be a good way
+       also exists better way: Bruijn graphs
+** Orthography -> phonetics
+   Spelling -> sounds
+*** Soundex
+    - design a translate table, for sound maps to numbers, each number indicate several specified chars, which have almost same pronounce. 
+      e.g. aehiouwy -> 0
+           bpfv -> 1
+    - except for initial char, translate string to initial char + numbers
+    - remove duplicates 
+    - remove 0s
+    - truncate to four symbols
+    - when the string matches the soundex in dict, all words in map have same soundex would be candidate for approx matches
+    - two improved phonetics algorithm:
+      Editex: take context in to consider, make the valuation of candidates based on context
+      Ipadist: text-to-sound algorithm to represent token -> International Phonetic Alphabet
+** evaluation
+   - a better way for evaluation is provide a candidate list, not only provide one suggestion.
+     

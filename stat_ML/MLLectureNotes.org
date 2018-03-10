@@ -1,0 +1,931 @@
+* Introduction & Probability Theory 
+** ML Basics 
+*** Terminology 
+**** Input:
+     + Instance 
+     + Attribute
+     + Label 
+     + Examples
+       instance + label 
+     + Models 
+       relationship
+*** Supervised vs unsupervised 
+    + Predict
+    + cluster, dimension reduction, attributes relationship 
+*** Architecture 
+    Train data -> Examples -> learner -> model -> evaluation 
+*** Evaluation 
+    poor data -> cross validation
+*** Noisy data 
+*** Model type 
+** Probability Theory
+*** Discrete distribution
+    *PMF* : probability mass function P(X=x)
+*** Continuous distribution
+    *PDF* : probability density function P(X<=x) = Integrity(p(a)da)
+*** Independent 
+    P(A,B) = P(A)P(B)
+*** Co* MDS 
+  get similarity of multi-dimension data and plot it nditional 
+    P(A|B) = P(A&B)/P(B)
+    P(xy) = P(x,y)/P(y)
+*** Bayes' theorem 
+    P(A&B) = P(A|B)P(B) = P(B|A)P(A)
+    P(A|B) = P(A&B)/P(B) = P(B|A)P(A)/P(B)
+    for swap condition   
+      
+   
+      
+  
+   ing order 
+* Statistical Schools 
+** Abstract problem
+   given set of data from some distribution
+   identify unknown distribution
+** Parametric approach /parameter estimation/
+   *Parameter estimation* : model indexed by parameters Theta
+   models indexed by parameters
+   estimate the theta of input data set 
+   + examples 
+     classifiers 
+** Evaluate Estimators methods 
+*** Bias 
+    calculated average value and true value 
+*** Variance 
+    + Efficiency 
+      minimal variance 
+*** Square-loss vs bias-variance 
+*** Consistency 
+    Theta^Hat converges to Theta as data set gets big. 
+** Maximum-likelihood estimation(MLE) -> find the parameter of distribution to maximize likelihood of observed data set
+   optimization(maximum) the theta hat, which is the product of all possibility 
+   Theta^Hat = argmax(product(p_theta(xi))), 
+*** Examples 
+**** Normal 
+     Continuous distribution
+**** Bernoulli 
+     know data from Bernoulli distribution with unknown parameters 
+     Discrete distribution, 0-1 distribution
+*** Algorithm
+    1. From given data generate the distribution of them 
+    2. Express likelihood of data
+       Logarithm for MLE calculation 
+    4. Optimization to minimum MLE with specified Theta 
+       Partial derivatives of log likelihood
+       Set to 0 and solve 
+** Bayesian statistics 
+*** Bayesian ML
+    1. distribution from given data set 
+    2. Observe data X=x 
+    3. Update prior to posterior 
+*** Parameters
+    Prior belief in Theta encoded by *prior distribution* P(Theta)
+    likelihood of data P(X) as P(X|Theta)
+    *MAP* : Max A Posterior argmax(P(Theta|X))
+*** How to update prior to posterior
+    P(Theta) = P(Theta|X=x) = P(X=x|Theta)*P(Theta)/P(X=x)
+                              conditioning prior   marginal
+                              argmax(log(P(Theta)))
+** Generative vs Discriminative Models 
+*** Generative -> more suitable for unsupervised 
+    model full joint P(X,Y)
+*** Discriminative -> more suitable for supervised
+    conditional P(Y|X) only 
+    do not modeling observed data 
+* Linear Regression 
+** Model 
+   y = a + bx 
+** Criterion 
+   sum of squared errors 
+** Solution 
+   SSE = SUM(square(y-(a+bx)))
+   derivatives of SSE with a and b
+   set derivatives to 0 
+   guess one parameter, calculate another 
+   iterations for solve the problem 
+*** Solution in vector 
+    add x0 = 1 for x vector 
+    then *x*' * *w* = y
+    y is 1x1, x is mx1, w is mx1
+    m is the number of parameters 
+** Noisy data 
+*** Regression with probabilistic model 
+    y = *x*' * *w* + epsilon 
+    epsilon is distribution of data 
+    represent noisy part of actual data 
+    also here y is distribution result 
+*** Normal distribution 
+    p(y| *x* ) = normal distribution with squared error
+    center of distribution is prediction by *x*' * *w*
+    and shape of distribution is based on delta
+**** Variables here is *w* and delta: delta for shape of distribution 
+*** Maximum likelihood estimation(MLE) 
+    estimate the parameters of distribution model 
+**** Basic idea
+     For probability, we need to maximum it by apply the training data. 
+     choose the parameters which leads to higher probability of landing on our model 
+**** Steps
+     P(y1,...,yn|x1,...,xn) = Pi(p(yi|xi)) where p(yi|xi) can be any distribution 
+     take log format of this expression, for using multiply instead of sum 
+     after log format, under normal distribution model, MLE is equivalent to minimize SSE
+** Solve 
+   x matrix + 1 as bias 
+   y = Xw 
+   L = Sum(yi-Sum(Xijwj))
+   w^hat = (X'X)^-1 * X'y
+* Regularization 
+** Aims
+*** Avoid ill-conditioning 
+    solution exists, solution is unique, solution behavior continuously with initial condition 
+**** Extreme case:  
+     a feature is linear combination of other features
+     draw a line based on one point 
+**** Mathematical consideration 
+     X'X has no inverse
+**** Solution: Re-conditioning 
+     additional condition 
+     y-Xw+lamda w 
+     w = (X'X+lamda*I)^-1 X'y
+     lamda and I as additional condition to avoid ill condition 
+***** This format called ridge regression, the formular turn a ridge to a peak
+*** Introduce prior knowledge 
+    Prior = initial expectation before access the data 
+    y = wx + epsilon
+    w ~ N(0,lamda^2), epsilon is noisy
+    *set expect distribution for w: p(w)*
+    in above we expect small parameters and no dominates feature 
+**** Example: Byes for calculate posterior 
+     set w has normal distribution, as prior: p(w)
+     posterior is p(w|X,y) = p(y|X,w)p(w)/p(y|X)
+     p(y|X,w) is likelihood, p(y|X) is marginal likelihood only depends on data, so for minimization we can ignore it 
+     so the problem is *Maximum A Posterior estimate (MAP)*
+     same as lamda function in above 
+*** Constrain modeling 
+** Vary model complexity to avoid overfitting and underfitting     
+*** Explicit model selection 
+    Try different model or different degree 
+    cross validation 
+*** By regularization avoid overfitting 
+    introduce lamda * R(Theta) to regularization
+    theta = argmin(L(data,theta)+lamda*R(theta))
+    e.g. w^hat = argmin(|y-xw|^2) + lamda*||w||^2
+**** Choose of lamda 
+     cross validation to choose lamda 
+     R(theta) independent to data 
+**** main idea 
+     lamda set constraint on parameters
+     the optimization may lead to overfitting 
+**** Examples 
+***** Ridge regression -> L2 form
+      circle around origin point to constraint choose of w
+      Mathematically ridge regression is X'X no -1, so new solution is (X'X+lamda*I)^-1 to make this invertable
+***** Lasso -> L1 form 
+      square around origin point 
+    axis are w1 and w2
+      
+* Logistic Regression 
+** Logistic model 
+   p(y=1|x) = 1/(1+exp(-x'w))
+   known x, define probability that y=1 
+   in s f(s) plane is f(s) = 1/(1+exp(-s))
+   to ensure the probability with in 0-1 
+   Bernoulli distribution for logistic model 
+*** Linear model for log-odds
+    log(P(y=1|x)/P(y=0|x)) = x'w
+*** Linear probabilistic model 
+    assumes Normal Distribution 
+    p(y|x) = Normal(y|x'w,sigma^2)
+*** Logistic regression
+    Bernoulli Distribution
+    p(y|x) = Bernoulli(y|Theta(x) = 1/(1+exp(-x'w))) = Theta^y * (1-Theta)^(1-y)
+*** Decision boundary 
+    p(y=1|x) = 0.5
+    vector w is perpendicular to this boundary
+** Main idea 
+   same as Linear regression
+   maximize the probability from training data and find the *w*
+   *MLE*
+** Calculation 
+   theta(x) = 1/(1-exp(-x'w))
+** Cross entropy
+   method to compare two distribution, measure divergence between reference and estimated  
+   *H(gref, gest) = -sum(gref(a)log(gest(a)))*
+*** Training with minimization cross entropy 
+    log format 
+    calculate cross entropy and minimize it 
+** Optimization 
+   set derivatives to 0 and find 
+*** No closed form solution 
+    *SGD* : iterative methods to solve iff no irrelevant features 
+* Basis Expansion 
+  Transfer data to suit the model 
+** Example 
+*** Polynomial regression 
+    change the order of data 
+    w1*x + w2*x^2
+*** Radial basis function 
+    z is a constant, treat as central of samples
+    phi(x) = f(||x-z||)
+**** E.g.
+     phi(x) = ||x-z||
+     phi(x) = exp(-||x-z||^2/delta)
+** Challenges 
+*** Good 
+    increase utility of methods, esp linear 
+*** limitation 
+    need to choose transformation beforehand 
+    zi choose beforehand
+    or using xi as zi for large data set 
+    but can generate large number of features
+** Further directions 
+*** Learn transformation function from data 
+    ANN
+*** Sparse kernel machines 
+    SVM
+*** Kernel trick 
+    Kernelised 
+* Iterative optimization
+** Main idea of supervised learning // This method called frequentist supervised learning
+*** Assume a model 
+    Denote parameters as Theta
+    model predictions are f^hat(x,Theta)
+*** Choose a criterion 
+    Measuring discrepancy 
+    *SSR* : sum of squared residuals 
+*** Training 
+    find an optimal parameters set to get best criterion 
+** Loss function 
+   discrepancy between prediction and real 
+*** Example 
+    Squared loss lsq = (y-f(x,theta))^2
+    Absolute loss labs = |y-f(x,theta)|
+    Perceptron loss 
+    Hinge loss 
+** Iterative solution 
+   for functions we can find analytic solution, just set derivatives to zero and find the answer 
+   for that we can not find: 
+   1. Initialization 
+      choose starting theta(1), set i = 1
+   2. Update
+      theta(i+1) = g(theta(i))
+      i = i+1
+   3. Termination 
+      decide stop condition 
+   4. Back to 2 
+   5. Stop 
+      return theta = theta(i)
+*** Coordinate descent
+    each time optimize one direction
+    then go to optimization
+*** Gradient descent 
+   online learning: update depends on 1 instance 
+   mini-batch: by choosing different batch size, can balancing computation time and accuracy of gradient. update w depends on size of mini batch, 
+   1. choose Theta^1 and T
+   2. For i from 1 to T
+      Theta^i+1 = Theta^i - yita*(gradient at Theta^i)
+   3. Return Theta^hat = Theta^i
+* Bias-variance trade-off
+** Assessing generalization capacity 
+*** Training model
+    minimize training error 
+*** Generalization capacity 
+    captured by test error 
+*** Aim 
+    relation between training error, test error and model complexity
+** Test error 
+   assume y = h(x0) + epsilon
+   h(x0) is true function, epsilon is noise,E(epsilon) = 0, Var(epsilon) = delta^2
+   E(y-f(x)) = (E(y)-E(f))^2 + Var(f) + Var(y)
+   Test error     bias^2      variance  constant 
+** Simple model has low variance but high bias 
+   No much vibration from center point 
+   but can not fit the test data, then have high bias 
+   models shows low variance 
+** Complex model has high variance but low bias 
+
+* Notes on linear algebra 
+  u.dot(v) = |u||v|cos(Theta) = u projectile on v product v 
+  hyperplane: x'w+b=0
+  normal vector: vector perpendicular to hyperplane, w is normal vector 
+  proof: choose u,v on this plane, and another vector can be defined as u-v, then set x = u-v, x'w = u'w - v'w = 0, so w is normal vector
+** logistic regression is linear method
+   decision boundary is 
+   1/1+exp(-x'w) = 1/2
+   exp(-x'w) = 1
+   x'w = 0
+* Perceptron model 
+** ANN
+   Two key parts: topology and weights adjust 
+   Activation function: weighted sum of inputs 
+*** Feed forward networks 
+**** Perceptron 
+     linear classifier
+     f(/x * w/)
+***** Loss function 
+      plot has axis of sy and L(s,y), so shape is that
+      L(s,y) = 0 on sy>0, if the prediction is correct, same sign 
+      L(s,y) = |s| on sy<0, if the prediction is wrong, different sign 
+      L(s,y) = max(0,-sy) as |y|=1
+***** Training algorithm 
+      using batch to improve computational feasibility for large data set 
+      gradient descent to update w 
+      1. guess w, k=0
+      2. For i from 1 to T -> steps 
+             For j from 1 to N -> training set 
+                 consider (xj,yj)
+                 update: w^k++ = w^k-yita*L(w^k)
+      yita is learning rate
+      L(w) is max(0,-sy)
+      s = sum(xi*wi)
+****** Problem 
+       L(w) has no derivation when sy>0
+       so we do not update when is correct classified 
+       when missclassification: 
+       w^k+1 = -yita*(+-x)
+       y=1, s<0, -xi
+       y=-1, s>0, +xi
+****** Convergence Theorem:
+       if data is linearly separable, this learning guaranteed to converge to a solution
+***** Example 
+      s = w1x1+w2x2+w0
+      initial setting: w1 = 0.2, w2 = 0, w3 = -0.1
+      learning rate is 0.1 
+      if test set j is wrong 
+      w1 = w1-n*x1
+      w2 = w2-n*x2
+      w0 = wo -n
+     
+* Multilayer perceptron 
+** Activation function :: perceptron to make decision 
+*** Step 
+*** Sign
+*** Logistic
+*** tanh
+*** Rectifier 
+** Motivation 
+   Limitation of single layer perceptron 
+   non-linear problems 
+** Flexibility 
+   can be adapted to various supervised learning setups 
+** Universal approximation theorem 
+   ANN with hidden layer with infinite number of units, and mild assumption on activation function, can approximate continuously functions on compact subsets of R^n arbitrarily well 
+** Training 
+   for online training, we need to define loss between single training example and prediction
+*** Loss function 
+    L(Theta) is the function of vij and wjk.
+    so take derivation of L/v and L/w
+    then can found that 
+    L/w = (z-y)u
+    L/v = (z-y)wjh'(rj)xi
+*** Adjust weight to minimize loss function 
+* Backpropagation 
+** Activation function 
+   Logistic = 1/(1+exp(-x))
+   Hyperbolic: y = tanh(x), dy/dx = 1-y^2
+   loss function: log entropy, dL/ds = y^hat - y
+** Calculation for BP
+   calculate dL/db = y^hat - y
+   use dL/db to get dL/dw1 = x1 * dL/db
+   as dL/db = dL/ds
+   then we can get dL/dw = x^T * dL/db, where b is bias added in input
+** With hidden layer 
+   h as hidden layer output 
+   then take dL/dh as one layer BP network, then dh/dx as one layer BP network
+   so we can calculate: dL/dx = dL/dh*dh/dx
+** Explicit regularisation 
+   e.g. ridge regression
+   L + lamda*(vij^2+wj^2)
+   
+* CNN
+** Any Boolean functions over m variables can be implemented using hidden layer with up to 2^m elements
+** Depth vs width 
+   Width -> universal approximator 
+   Depth -> Accuracy 
+** Convolution 
+   From one function, generate other function 
+   b = a*w
+   b is a vector, a is input vector, w is weight matrix 
+   w called kernel or filter 
+   + e.g. 
+     1 dimension input a, to 1 dimension output b
+     1*3 x 3*1 = 1
+     a     w     b
+   different w leads to different output 
+   several elements in a leads to one output in b
+*** Main idea 
+    From given input, through filters get small size output
+    then downsampling for further convolution 
+    filter is learned from data 
+*** Difference between multilayer perceptron and CNN
+    do not depend on whole input data, but is local part of input 
+*** Downsampling via Maxpooling 
+    avoid parameter explosion 
+    for m*m patch
+    v = max(u11,u12,...,umm)
+**** Implementation 
+     in forward process, record a max value and it's position 
+     in backpropagation, put back the value to it's original position and set other elements in this patch to 0 
+     decrease noisy of original data set 
+*** Structure 
+    Convolution -filter weight learning on training data-> Downsampling -Maxpooling, limits parameter explosion-> Fully connected   
+* Autoencoding 
+** Main idea 
+   input layer is x, output layer is z, set z(xi) = xi, middle layer is thinner than io. 
+   for input, through encode part, get thinner layer called code, then after decode part we get the output 
+   if we can get a good result, means the code, which is lower dimension data can well representation input data
+   use a lower dimension data to encode higher dimension input data set
+   with one hidden layer is PCA
+* SVM
+** Difference from perceptron
+   different criterion for choosing parameters 
+   for perceptron, if a line can perfectly separate the data, there no difference between them
+   SVM will find a line which is far from different data set
+** Purpose of SVM
+   find a line to maximize the minimum distance between two different classes 
+   min(y_i*s_i/||w||) where s_i = w'x_i+b
+   maximize the min of distance by point pair with different label
+*** Problems 
+    will find infinite parallel lines satisfy the constraint
+**** Solution
+     add constraint on w that yi(w'xi+b) = 1, for closet point i
+     to scale to unique solution of w and b
+     means the distance from closet pair to boundary is 1/|w|
+     Thus the problem constraint can be express as: 
+     *argmin(|w|)*
+     *y(wx+b)-1>=0*
+** Hard margin  
+   parallel lines, so we choose the distance between closet pair is 1/||w||
+   so we can find the line in exactly central of closet pair 
+*** Loss function 
+    L = 0      if 1-y(wx+b)<=0
+        inf    if 1-y(wx+b)> 0
+*** Training 
+    find lamda by Lagrange multiplier constraint, which is equavialent to find w and b to maximize within constraint
+    lamda>=0 and lamda*y = 0
+*** Prediction 
+    s = b + sum(lamda*y*x'x)
+    find b by ys = 1
+** Soft margin 
+*** Loss function -> hinge loss
+    Lh = 0            if 1-y(wx+b)<=0
+        1-y(wx+b)    if 1-y(wx+b)> 0
+**** Slack variable on Lh
+     epsilon >= Lh, equavialent to epsilon>=1-y(wx+b) and epsilon>=0
+     two constraint of soft SVM
+*** Complementary slackness
+    put lamda* = 0 for points outside the margin 
+*** Training 
+    same as hard margin SVM 
+    apply constraint on lamda: C>lamda>=0, also lamda*y=0
+*** Prediction 
+    same as hard margin SVM 
+** Constrained optimisation 
+   *Lagrange/KKT multiplier*
+   L(x,lamda,v) = f(x) + sum(lamda_i*g_i)+sum(v_j*h_j)
+   g(x) and h(x) are KKT constraints
+*** For SVM 
+    L(w,b,lamda) = |w|^2 - sum(lamda_i(yi(wxi+b)-1))
+                 primal obj       constraints
+    (yi(wxi+b)-1)>=0
+    lamda>=0
+    lamda_i^*(yi(w^*xi+b^*)-1)=0 boundary condition 
+    zero gradient 
+*** Reason for use KKT 
+    w* b* is solution of primal hard margin SVM, then exists lamda*, that 3 of them satisfy KKT conditions 
+    if satisfy, w* and b* is a solution of primal problem.
+*** Gradient of L_KKT
+    derivation of b and wj 
+    apply zero gradient we get 
+    L_KKT(lamda) = sum_i(lamda_i) - sum_i(sum_j(lamda_i*lamda_j*y_i*y_j*x_i*x_j))
+    this is expression of gradient, so find lamda to maximize this L_KKT(lamda) 
+    *Lagrangian dual problem* : previews called 
+    argmax(L_KKT(lamda)), lamda_i>=0;sum_i(lamda_i*y_i)=0
+*** Actual steps for using soft SVM
+    1. Training 
+       find lamda that satisfy: 
+       argmax(L_KKT(lamda)), lamda_i>=0;sum_i(lamda_i*y_i)=0
+    2. Prediction
+       s = b^* + sum_i(lamda_i*y_i*x_i'*x)
+       here x is test set which is unseen x_i is training set. 
+       where b^* can be found by y_j*s_j=1
+** Finishing touches 
+   as most points outside the margin, so most of lamda is 0 according to lamda_i(y_i*s_i)=0
+   as s_i depends on sum of product, dot producting is more efficient 
+   *Sequential minimal optimisation* : SMO is another algorithm, iterative procedure that analytically optimises randomly chosen pairs of lamdas in each iteration
+
+* Kernel method 
+  feature space transformation
+** Dot product in some feature space 
+   1. Compute phi(xi)'
+   2. Compute phi(xj)
+   3. Compute kij = phi(xi)'phi(xj)
+** Determine a kernel 
+   K(u,v) = phi(u').phi(v)
+** Reason for not find phi(x)
+   time complexity of computing k-matrix is O(m), where computing phi(x) is O(l)
+** Lagrangian dual problem 
+   the primal problem and dual problem do not share the same answer 
+** Complementary slackness 
+*** Problem of lamda matrix 
+    only the point inside margin has none zero value 
+    so lamda matrix is sparse 
+*** Problem when make prediction 
+    calculate the sign of s = b + sum(lamda*y*x'x)
+    second part is iterates each data point 
+    but lamda only non-zero for support vector 
+    so can dot product the given data with all support vector
+** Modular learning 
+   both training and predictions require data only in form of dot product 
+   all information concentrated with kernel
+   can change kernel function easily 
+   decouple algorithm design into learning method and kernel choice
+** Constructing Kernels 
+   by decomposition a function, and if 
+   K(u,v) = K1(u,v)+K2(u,v)
+   K(u,v) = cK1(u,v)
+   K(u,v) = f(u)K(u,v)f(v)
+   then the new K(u,v) is a kernel
+*** Proof rbf kernel 
+    using Talor expansion 
+*** Mercer's theorem
+    Consider a finite sequences of objects, x1 - xn
+    construct n*n matrix K(xi,xj)
+    K(xi,xj) is kernel if K is positive semi-definite
+** Kernel as similarity measure 
+   in re-parameterised SVM, using K(xi,x) for training and prediction, can be seen as compare x with each support vector xi.
+   also in Gaussian kernel, measurement is distance between two vector
+*** Kernel is similarity measurement 
+    maps two object to a real number 
+    can apply kernel method to non-vector object 
+* Ensemble methods 
+  aka model combination 
+** Reason
+   bias-variance trade-off
+   test error = bias^2 + var + irreducible error 
+   averaging k independent model: var(f_avg) = 1/k * var(f)
+** Bagging/Bootstrap 
+   construct "novel" data set via sampling with replacement 
+   size keep n, voting or averaging result 
+*** Random forest 
+    bagged tree with random features selection 
+*** Use out-of-sample data 
+    (1-1/n)^n for large n approaches e^-1 = 0.368
+**** How to use 
+     cross-validation
+     evaluate classifier on corresponding 36.8% data 
+     average these accuracies 
+*** advantage 
+    simple method 
+    possibility to parallelise 
+    high effective over noisy data 
+    better performance 
+    improve unstable classifier
+* Unsupervised learning 
+** Clustering 
+   find k, aka how many clusters need 
+   visualising data 
+   try few plausible value 
+*** Find k in K-means
+**** Cross-validation
+**** try several k and see trend
+     plot k, value in kink should be fine 
+**** Information theoretic results
+**  Dimensionality reduction 
+**  learning parameter of probabilistic models 
+* Clustering/GMM 
+  key point: definition of similarity 
+** Gaussian Mixture model -> generalization of K-means
+   find the cluster centroids can be viewed as find model of data distribution
+   with max Gaussian probability is the centroid of one cluster 
+*** Diff with K-mean 
+    K-mean assign point to exactly one cluster
+    Gaussian gives probability of this point belong to each cluster 
+*** M-dimensional Gaussian distribution
+    p(x) = sum_c(w_c*N(x|u_c,Delta_c))
+    each point originates from c-th normal distribution component with probability w_c
+    Now our aim is find parameters of GMM best explain the observed data 
+*** Optimal goal 
+    argmax(p(x1..xn) = product(sum(w_c*N(xi|u_c,Delta_c))))
+    log trick can not get inside sum, so use iterative procedure 
+** Expectation Maximization : EM
+*** vs MLE
+    MLE define the what is best parameters for our model, can be solved by SGD
+    EM is an algorithm to solve problem posed by MLE
+*** Reason for EM 
+    1. can not observe some of variables needed to compute log likelihood
+    2. log format is not suitable to deal with 
+*** Key idea: introduce latent variables 
+    introduce unobserved variable collection Z 
+    directly models unknown variable situation 
+    smart choice of Z can make calculation easy 
+    e.g. in GMM, known Z to denote true cluster membership for each point x_i
+*** Jensen's inequality 
+    f(E(x))<=E(f(x))
+    expectation of function always greater than function of expectation
+*** Steps 
+    log(p(X|Theta)) = log(sum_z(X,Z|Theta)) -> marginal distribution
+    See lecture for proof 
+**** As the result with theta and p(Z), we can not optimize, so introduce EM
+**** EM steps 
+     Fix Theta, optimize lower bound for p(Z)
+     Fix p(Z), optimize for Theta 
+**** EM convenience 
+     for any Theta^*, p(Z) = p(Z|X,Theta^*) make lower bound tight 
+     See lecture for proof 
+**** EM algorithm 
+     1. initialisation 
+        choose initial values of Theta(1)
+     2. Update:
+        E-step: Q(Theta,Theta(t)) = E[log(p(X,Z|Theta))]
+        M-step: Theta(t+1) = argmax(Q(Theta,Theta(t)))
+        + Here Q(Theta,Theta(t)) = E[log(p(X,z|Theta))] = sum_z(p(z))log(p(X,z|Theta)) = sum_z(p(z|X,Theta(t)))log(p(X,z|Theta))
+          argmax is still set derivation to zero 
+     3. Termination:
+        no change then stop 
+     4. back to step 2
+**** EM problem 
+     local maximum 
+** Estimating parameters of GMM 
+   number of z is number of clusters, z_i denote the true centroid
+   log(p(x1..xn,z)) = sum_n(log(w_zi*N(xi|u_zi,Delta_zi)))
+   Need to define P(zi=c|xi,Theta(t))
+   ric = P(zi=c|xi,Theta(t)) = wc*Nc/sum(w*N) -> responsibility that cluster c takes for data i
+   See lecture 14 P24-26 for details 
+** K-means and GMM 
+   wc = 1/k
+   ric = 0 or 1 
+* Demensionality reduction 
+** Reason
+   visualisation 
+   computational efficiency 
+   data compression 
+** PCA
+*** algorithm 
+    choose axis with highest variance
+    project original data to this new axes
+    keep l axes as l PCA
+*** PCA component 
+    p1..pm, ||pi||=1
+    so transformed data can be see as X'*p_i, as all x project to p_i axis 
+*** Statistics 
+    centered data, for using dot product to calculate covariance
+    Delta(X) = 1/(n-1) * XX', X = 2 x n matrix, with 2 is dimension 
+    so the projected on p1 is X'p1
+    so the variance along this axis is p1'Delta(x)p1
+*** Goal 
+    find p1 that maximise p1'Delta(x)p1
+    ||p1|| = 1 -> p1'p1=1
+*** Solve 
+    Lagrange multiplier 
+    L = p1'Delta(x)p1 + lamda1(p1'pa-1)
+    dL/dp1 = 2Delta(x)p1 - 2 lamda1 p1 = 0
+    Delta(x)p1 = lamda1 p1
+    so we found lamda1 is Delta(x) is eigenvector with lamda1 as eigenvalue
+    thus our problem becomes find largest eigenvalue of centered data covariance matrix Delta(x)
+    *lemma* : real symmetric mxm matrix has m real eigenvalues and corresponding eigenvectors are orthogonal 
+    centered and put data in column in order to find p1..pm that perpendicular to every other axis 
+** Multidimensional scaling : MDS
+*** Parameters 
+    measurement of distance
+    + Euclidean distance 
+      d(zi,zj) = ||zi-zj||
+    measurement preservation of distance
+    + stress function 
+      S(z1..zn) = sum(d(xi,xj)-d(zi,zj))^2 / sum(d(zi,zj))^2
+*** Goal 
+    find z1..zn to minimize S(z1..zn)
+*** Intuition 
+    keep cluster structure in low dimensional map 
+    keep pairwise distance between points
+
+
+  
+* Manifold learning 
+  Dealing with data set has specified shape 
+  *manifold* : subset of points in high dimensional space locally looks like low-dimensional space 
+  e.g. small part of circle can be seen of 1 dimension line 
+** Geodesic distances 
+   MDS is an example of this 
+   "unfolding" a manifold is achieve via dimensionality reduction like MDS
+   replacing distances with geodesic distances, no need to change MDS algorithm
+*** Two options for construct geodesic distance 
+    1. define local radius 
+    2. define nearest neighbor threshold k
+*** Isomap -> kind of pipeline combined with processing blocks, graph construction and MDS
+    1. construct similarity graph
+    2. compute shortest paths as geodesic distance 
+    3. construct similarity matrix using geodesic distance 
+    4. apply MDS 
+** Spectral clustering 
+   1. Construct similarity graph
+      like isomap, capture local geometry breaks long distance relations 
+      unlike isomap, used distance not shortest path 
+   2. Map data to lower dimensional space using Laplacian eigenmaps on adj matrix 
+      use result from spectral graph theory 
+   3. Apply k-means clustering to mapped points 
+*** graph part 
+    add option 3 for spectral clustering
+    consider as full connected graph, weight using Gaussian kernel 
+    wij = exp(|xi-xj|^2/delta)
+*** Graph Laplacian
+    W: weighted adj matrix 
+    D: degree matrix, diagonal matrix with vertex degrees on diagonal
+    L: unnormalised graph Laplacian = D-W // I-D^-1W
+*** Laplacian eigenmaps 
+    non-linear dimensionality reduction 
+    Goal: map x to z, z is low dimensional 
+    minimise: sum_ij(|zi-zj|^2*wij)
+*** example Lecture 16 p27-29
+    result is L is eigenvector
+* Bayesian inference and Bayesian regression
+** Bayesian inference 
+   weights with better fit to training data 
+   make predictions with all these weights, scaled by their posterior probability 
+   + basic idea 
+     get all acceptable weight from training data, make prediction based on their posterior probabily
+   + advantage 
+     less sensitive to overfitting 
+     give rise to more expressive model class 
+** Frequentists vs Bayesian 
+   + F: learning using point estimates, regularisation, p-values 
+     backed by complex theory relying on strong assumption
+     mostly simpler algorithm 
+   + B: maintain uncertainty, marginalise out unknown during inference
+     fewer assumptions 
+     more complex algorithm 
+     results in more elements model 
+** Bayesian linear regression
+   example Lecture 17 p17-21
+*** add delta^2 as distribution of w 
+*** conjugate prior: 
+    product of likelihood x prior results in same distribution as prior 
+*** Sequential Bayesian Updating 
+    formulate p(w|X,y,delta^2) for given dataset 
+    get access to more data 
+    1. start from prior p(w)
+    2. access to new training data 
+    3. compute posterior p(w|X,y,delta^e2)
+    4. using posterior as prior, back to step 2 
+
+* Bayesian classification
+** Stages of training 
+   1.Decide on model formulation & prior 
+   2.compute posterior over parameters, p(w|X,y)
+*** MAP
+    3.find model for w 
+    4.use to make prediction on test 
+*** approx. Bayes 
+    3.Sample many w 
+    4.use to make ensemble average prediction on test
+*** exact Bayes 
+    use all w to make expected prediction on test 
+** Prediction with uncertain w 
+   sample S parameters w^(s)
+   for each sample compute prediction y*^(s) at test point x*
+   compute the mean over prediction 
+   Monte Carlo integration 
+*** Caveats 
+    Assumptions: known data noise parameter delta^2
+    data was drawn from model distribution 
+** Bayesian classification 
+*** Generative scenario 
+    First off consider models which generate the input 
+** Bayesian model selection 
+*** Model selection 
+    choose best model, linear, polynomial, RBF basis or kernel 
+    setting model hyperparameters 
+    optimiser settings 
+    type of model
+*** frequentist model selection 
+**** Holdout some data for validation 
+     as estimate of generalisation error 
+     lowest validation error will chosen 
+     may retrain with full data set 
+**** Problems 
+     data inefficient 
+     computation inefficient 
+     inefficient when selecting many parameters at once 
+*** Bayesian model selection 
+    Model selection using Bayes rule to select between competing model classes 
+    with Mi as model i and D the data set
+    p(Mi/D) = p(D|mi)p(Mi)/p(D)
+    Decision between two model classes boils down to test
+    p(M1|D)/p(M2|D)=p(D|M1)/p(D|M2)>1, known as Bayes factor
+**** Evidence 
+     p(D|M) = p(y|X,M=linear) or p(y|X,M=cubic)
+     consider w 
+     p(D|M) = integrate(p(y|X,M=linear)p(w)dw)
+     posterior 
+     p(w|X,y,M) = p(y|X,w,M)p(w)/p(y|X,M)
+**** Bayesian Occam's Razor
+     
+* Probabilistic Graphical Models 
+** Probabilistic inference
+   P(Y=y|X=x) = P(Y=y,X=x)/sum_y(P(X=x,Y=y))
+   Bayes rule + marginalisation 
+   + disadvantage 
+     computational complexity 
+     model complexity is too flexible, overfit 
+** Factoring joint distribution 
+*** Assumption 
+    Independence assumption 
+*** Chain Rule 
+    P(X1,X2,..Xk) = product(P(Xi|Xi+1,..Xk))
+    with independent assumption 
+    P(X1,X2,..Xk) = product(P(Xi))
+** Directed PGM 
+*** Joint factorisation 
+    P(X1,X2,..Xk) = product(P(Xi|Xj belong to parents(Xi)))
+** Independence 
+   *Marginal independence* :P(X,Y) = P(X)P(Y)
+   *Conditional independence* : P(X,Y|Z) = P(X|Z)P(Y|Z)
+** Explaining away 
+   value of Z can give information linking X and Y 
+   Berkson's paradox 
+   *marginal dependence != conditional independence
+** D-separation 
+*** Point of use 
+    + Designing the graph
+      understand what independence assumptions are being made 
+      inform trade-off between expressiveness and complexity 
+    + Inference with graph 
+      computing of distribution must respect in dependence 
+      affects complexity of inference 
+*** Markov blanket 
+    P(Xj|X1..Xn), using d-separation rules from graph to safely drop rvs from this blanket
+** Undirected PGMs 
+*** Notion 
+    *Clique* : set of fully connected node 
+    *Maximal clique* : largest cliques in graph 
+*** d-separation
+    no directed connected node | their connected node 
+    example in Lecture 21 p21
+*** Markov blanket
+    its immediate neighbors 
+*** Directed to undirected 
+    1. copy nodes 
+    2. copy edges 
+    3. connect parent nodes 
+*** Reason 
+    + Pros 
+      generalization of D-PGM
+      simpler means of modelling without need for perfactor normalisation 
+      general inference algorithms use U-PGM 
+    + Cons 
+      weaker independence 
+      calculating global normalisation term intractable in general 
+
+  
+  
+* Probabilistic inference on PGMs
+  elimination on Graph 
+  start from observed one 
+** Steps 
+   remove a node 
+   connect node's remaining neighbors 
+   forms a clique in reconstructed graph 
+** Time complexity
+   exponential in largest clique 
+   *strewedidth* minimum over orderings of largest cliques 
+** Probabilistic inference by simulation  
+   approximate data by histogram of samples 
+** Statistical inference 
+   learn parameters from data 
+*** Main idea 
+    apply MLE to find parameters
+    decompose by log trick, and break it into small independent problems 
+*** Problem
+    mostly not all data is observed 
+*** Solution 
+    guesses for missing variables 
+    employ MLE 
+    Updating missing data 
+    updating probability tables/parameters 
+*** Expectation-Maximization algorithms
+    Seed parameters randomly -> fill truth table 
+    E-step complete unobserved data as posterior distribution
+    M-step update parameters with MLE on fully observed data
+* Hidden Markov model HMM
+  sequential observed outputs from hidden state
+  *Kalman filter* : same with continuous Gaussian rv's
+** Applications 
+   NLP -> part of speech tagging
+       -> given waveform, determine phonemes 
+** Formulation 
+   as directed PGM 
+   Lecture 24 p6
+   P(o,q) = P(q1)P(o1|q1)Product(P(qi|qi-1)P(oi|qi))
+*** Parameters 
+    A = {aij} -> transition probability matrix, sum_i is 1 
+    B = {bi(ok)} -> output probability matrix, sum_i is 1 
+    Pi = {pi_i} -> initial state distribution, sum_i is 1
+    all oi independent 
+    Markov blanket is local 
+    qi -> qi-1, oi, qi+1
+** Fundamental HMM with PGM 
+   | HMM Task | PGM Task |
+   |---+--- |
+   | Evaluation:give u and observed o, determine P(o|u) | probability inference  |
+   | Decoding: given u and o, determine most probable hidden state seq q | MAP point estimate |
+   | learning: given o and states, learn parameters A,B,Pi | statistics inference |
+   

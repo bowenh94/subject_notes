@@ -1,0 +1,56 @@
+* DONE Weekly quiz
+  CLOSED: [2017-06-06 Tue 16:07]
+** Guaranteed Multicast
+** RMI structure and Transparency
+*** Client stub and server stub 
+** Marshalling 
+   Encode application layer structure in external form 
+** Group communication 
+   ensure order and group management *versus* IP multicast
+** DSM 
+   data store in DSM do not need marshalling
+** NFS
+   which operation is not idempotent
+** AFS Andrew File system
+   call mechanism to ensure consistency
+** Name service 
+*** Reverse resolution 
+    find host IP dress using domain name 
+*** name space 
+    collection of valid name for specific service 
+*** Name server store 
+    root server, sub-domains, parent domains
+*** When a server can not solve the query
+    reply by suggesting another server will able to help.
+* DONE Workshop questions
+  CLOSED: [2017-06-07 Wed 15:32]
+** Socket bond to a local port 
+** Three Abstractions provided by middleware?? 
+   RMI
+   RPC
+   DFS
+   DDB
+** JAVA RMI Compile process 
+*** Why transparency is not always desirable in middleware
+    Can't distinguish communication failure and omission failure from remote server 
+    Delay in remote call will take long time 
+    So give designer an option *IDL* to choose the transparency, also specify the semantic of at-least-once, at-most-once ...
+*** Difference with RPC
+    RMI call a method with specify object, RPC hidden the detail in server 
+** Event based DS 
+   Pub/Sub system 
+** Key distributed service 
+** Disadvantage of multithread compare to multiprocess 
+   Synchronization overhead of shared data 
+   Share process memory space 
+   Program debugging 
+** Domain transition 
+   context switching 
+** Process migration 
+   process move from one host to another 
+   copy the address space 
+   problems: dependent on CPU or using host resource like socket 
+* TODO 2016 exam
+** Emulation and virtualization 
+   Emulation: if a software runs on system A but not system B, emulate A on B, so software can run on emulation of A in system B
+   virtualization: divide the system resource and sign them to virtual OS, they can reboot independently.

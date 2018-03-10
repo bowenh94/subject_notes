@@ -1,0 +1,1257 @@
+* Introduction 
+** What is distributed system 
+*** Definition 
+    1. *Components* located at networked computers and *communicated* and *coordinate* actions with each other.
+    2. Collection of independent computers appears to user like a *coherent system*
+*** Key aspect
+    1. Components
+    2. Communication
+    3. Synergy, not simple sum of computers 
+*** Diff with computer network
+    /computer network/: separated, interconnected, exchange massage based on protocol, addressed by IP 
+    /Distributed system/: together as system, separated and interconnected details hide from user.
+** Why distributed system
+*** Resource sharing 
+    Hardware: scanner, printer
+    Software: file database
+    Other: bandwidth, processing power
+*** Benefits
+    Economy: Share one printer
+    Reliability: one printer is dead
+    Availability: one printer is live then all system is working 
+    Scalability: add a user do not require a new 
+** Examples of distributed system 
+*** Based on computer networks 
+**** Internet
+     number of intranet linked by backbone 
+     use common means of communication protocols
+**** Intranet 
+     boundary can secure local policies
+     local area connection with backbone
+     internet edge allow users in intranet can access internet
+     Firewalls can protect the intranet from internet
+**** Wireless networks
+     Mobile computing: access computing power while in light client
+     Ubiquitous computing: computing on mobile device with light task
+     Internet of things
+** Challenges
+*** Consequences
+**** Concurrency
+     Service can be accessed by multiple user simultaneously
+**** Global clock
+     No synchronized clock
+**** independent failure 
+     Failures of independent computer not known to others immediately 
+*** Challenges
+**** Heterogeneity
+     some resource in DS is heterogeneous, so we need some approach to handle this
+***** Approaches
+      + Standard protocols: TCP
+      + Agreed upon message: Data marshalling
+      + Adhering to agreed APIs: JAVA RMI
+      + Middleware:
+        software layer between DS application and operating system 
+        Provide programming abstract 
+        masks heterogeneity of underlying networks,hardware, OS and programming language 
+        + examples:
+          Distributed file system
+          RPC(remote procedural call, procedural language)
+          RMI(java)
+          Distributed Document
+          Distributed Data base
+      + Portable code: 
+***** Heterogeneity and mobile code 
+      compile and run the code need OS support. 
+      virtual machine can deal with this problem
+      another approach is cross-platform, but require multiple times of compile
+**** Openness
+     add hardware or software.
+***** Approaches
+      Publishing key interface 
+      Allow uniform communication mechanism to communicate over published interface 
+      Ensuring all implementation adhere to published standard
+**** Security
+***** Three aspects
+      + Confidentiality
+        unauthorized individuals 
+      + Integrity 
+        alteration and corruption
+      + Availability
+        interference with access, e.g. the infinite attack for ISP or a server port
+***** Secure mechanism
+      + Encryption 
+        RSA, Blowfish
+      + Authentication 
+        Public key authentication, passwords 
+      + Authorization 
+        access control list
+***** Security challenges 
+      Denial of service: availability 
+      mobile code: execute as attachment 
+**** Scalability
+     handle growth number of users 
+***** challenges
+      + Cost of physical resources 
+        O(n), 1 printer for 4 people, 2 should for 8 people
+      + Controlling performance loss
+        time complexity of search, lookup. e.g. O(logn) is better than O(n^2)
+      + Resource should not run out: e.g. IP v4 address 
+      + Performance bottleneck:
+        decentralized architecture can avoid bottleneck
+**** Failure handling 
+***** Detecting 
+      e.g. checksum for detecting failure
+      but failure of remote server is hard to certain about
+***** Masking 
+      e.g. timeout and retransmission, can be hidden 
+***** Tolerating 
+      Some time failure could be tolerating. 
+      e.g. 404 and try again later
+***** Recovery 
+      e.g. roll back mechanism to recover data
+***** Redundancy 
+      e.g. multiple servers to provide same service 
+**** Concurrency
+     Multiple client may access same resource at same time 
+***** Approaches
+      sequential handle: may slow down the system 
+      Semaphores: supported by OS, to indicate the available resource for multi thread 
+**** Transparency
+***** Access
+***** Location 
+***** Concurrency
+***** Replication 
+***** Failure
+***** Mobility
+***** Performance
+***** Scaling
+
+* Models 
+** Introduction
+*** Physical model: hardware elements 
+*** Architecture: 
+    elements: components of system 
+    patterns: how components map to underlying system 
+    middleware solution: existing solution to common problems
+**** e.g. 
+     Client-server
+     Peer-to-peer
+*** Fundamental:
+    Non-functional aspects of DS 
+**** e.g.  
+     reliability
+     security 
+     performance 
+** Architecture
+*** Elements
+**** Communicating entities 
+    + system prospective 
+      processes 
+      threads 
+      nodes: like end device, e.g. Sensors 
+    + programming language
+      objects: DS objects system
+      components: like objects, but with dependence 
+      both of them used within organization
+**** Interface 
+    DS processes can not access others internal variables or procedures 
+    Call by reference is not possible for the address space is different
+    The functions designed for remote invocation defined interface for invocation 
+    + Advantage of using interface: hide details of implementation and change to user, also provide a friendly programming environment
+      Hide the implementation
+      Hide the language used underlying the system
+      Hide the change of implementation to users 
+**** Communication paradigm 
+    Low -> High level
+***** Interprocess
+****** e.g. 
+******* Shared memory
+******* socket
+******* multicast communication
+***** Remote invocation
+     + e.g.
+
+****** e.g.
+******* Request-reply 
+******* remote procedures call(RPC)
+******* remote method invocation(RMI)
+***** Indirect communication
+****** Space uncoupling 
+****** Time uncoupling
+****** e.g.
+******* group communication 
+******* publish-subscribe 
+******* message queue
+******* tuple space 
+******* distributed shared memory
+**** Roles and responsibility
+    Client: establish connection to other process 
+    Server: receive connection *who initiated connection, who is client*
+    Peer: take two responsibility
+**** Placement
+***** Mapping multiple service to multiple servers 
+     Single process on multiple servers 
+***** Caching 
+     Store data near user to save time 
+***** mobile code 
+     transfer code to where store the data is more efficient 
+***** mobile agent: github 
+     code and data together on user's computer 
+*** Patterns  
+**** Client-server
+     Server can play the role of client when communicated with other servers
+**** P2P
+**** Multiple servers provide service 
+***** web service 
+***** Sun network information service 
+**** Proxy servers and caches 
+***** CDN
+**** Mobile code and agent 
+***** applet
+      download to client and execute 
+**** network computers and thin client 
+     SSH to a remote server and run application on there
+     highly interactive graphical activities is not suitable 
+*** Layers
+    Vertical 
+    From high to low 
+**** Application, Service 
+**** Middleware
+     + Provide value added service:
+       Naming 
+       Security 
+       Transactions 
+       Persistent storage 
+       Event service 
+     + Disadvantage 
+       Overhead for abstraction
+       Can not completely hidden from app layer, need to handle errors 
+*** Tiered architecture
+    + 2 Tiered 
+      Client -> Server 
+    + 3 Tiered 
+      Client -> Application Server -> Database Server 
+**** OS
+**** Hardware include end device and network
+** Fundamental 
+   Allow to analyze a DS in terms of fundamental properties regardless of architecture 
+*** Interaction 
+    Performance(delay) and reliability(transmission error)
+    Models the interaction between processes of DS
+**** DS algorithm specified
+      Steps taken by each process 
+      Transmission between process 
+**** Two important aspects
+***** Communication channel
+      Latency 
+      Bandwidth 
+      Jitter
+***** Computer clock and timing event 
+      + Cause of this problem
+        Initial time setting is different
+        Time drift is different
+        *GPS* can synchronize clocks, but too costly and do not operate inside buildings 
+****** Two time model 
+******* Synchronous
+        Assume known boundary of:
+        time to execute each step
+        time drift
+        transmission delay 
+******* Asynchronous 
+        no assumption 
+        + event ordering by *logical time*, like TCP syn field 
+*** Failure
+**** Omission failure 
+     Functional failure, not do what should do 
+***** Process omission failure 
+      Caused by: Process crash 
+      Indication: repeated failure 
+      Detection: Timeout 
+      Handle: fail-stop if other process detect the process failure
+***** Communication omission failure 
+      sender process -> sender outgoing buffer -> transmission -> receiver incoming buffer -> receiver process
+      Send failure: first ->
+      Receive failure: last ->
+      channel failure: two -> besides transmission
+**** Arbitrary failure(Byzantine failure)
+     Any failure in system 
+***** Types
+      Step omitted 
+      Msg corruption
+      Non-existing msg send 
+      duplicated msg send 
+**** Timing failure 
+     When time limits is set, then timing failure may occur
+     process execute time 
+     transmission delay
+**** Reliable of 1-1 communication
+     *validation* send msg reach destination
+     *integrity* no duplication 
+*** Security 
+    *Openness* bring secure risk 
+**** Object securing 
+     Principal to address the right to operate on object 
+**** Process securing 
+     No authorization on incoming msg.
+**** Channel securing 
+     Enemy can change msg in channel
+**** DOS attack 
+     In order to fail the service 
+**** Mobile code 
+     attachment 
+**** approach to security 
+     Cryptography and shared secret
+     Authentication
+     Secure channel: SSL
+** Summary
+   
+* Interprocess
+** Intro
+   deal with middleware layers: without RMI and RPC(both care about remote process) which will discussed in next chapter
+   - request-reply protocol
+     marshalling and external data representation
+     Java APIs for TCP and UDP
+     - UDP
+       Message passing abstraction
+       simplest form of IPC
+       Datagram based transmission
+     - TCP
+       2-way stream
+       no msg boundary
+       basis for producer and consumer 
+       queued until consumer is ready to receive 
+       consumer wait until no msg is available
+   - Data representation
+     data stored in memory may have different format during transmission
+   - Higher level protocols 
+     Clinet-server communication: request-reply 
+     Group communication: group multicast
+** API for internet protocol
+*** characteristics for interprocess communication
+**** communication may be synchronous(blocking) and asynchronous(non-blocking)
+    - queue always associated with each destination *sender* and *receiver* need queue
+      sending process: add a message to the remote queue, 
+      receiving process: remove a message from local queue.
+   - sync: each request need a reply, when a sending thread is issued and it will blocked until a receive is issued  
+           instance message
+     async: multi request are allowed, transmission process is parallel with sending process 
+            e.g. TCP Email FTP 
+   - in Java environment: supports multiple thread in single process, so blocking receive has no disadvantage. 
+     it can be issued by one thread while other thread is still active. 
+     in modern systems, async or non-blocking receiving is barely used for hard of flow control, but the core of async is non-blocking sending.
+   - UDP for file index lookup in project
+**** message destinations 
+    - Socket(pair of IP address and port number) for locate the destinations, multiple sender -> one receiver(server port)
+    - location transparency:
+      provide by name server, binder or os
+      Clients programs services by name and use a name server or binder to translate their names in to server locations at runtime, -
+      -which allows services to be relocated but not migrate, which means can move a service when a system is running
+**** Reliability
+    - reliable connection or best efforts connection 
+      TCP UDP
+    - reliable connection means message delivery is guaranteed, despite many could be dropped.
+      uncorrupted and without duplicate
+**** Ordering
+    - some process require the message received in exact order, or will regarded as failure
+*** Socket
+**** Properties 
+     IP address + port number
+     One receiver + multiple sender -> one process listen to one port /now allow multiple listen process/
+     One protocol one port 
+     One port for receive and send 
+     Independent socket address
+**** IntAddress class in JAVA
+    - endpoint between process. each port associated with particular protocol: TCP or UDP
+    - Java API for Internet address:
+      Class: InetAddress
+      #+BEGIN_SRC java
+        InetAddress aComputer = InetAddress.getByName("www.google.com")
+      #+END_SRC
+*** UDP datagram communication
+    - in server-client mode
+      server bind a port to UDP process
+      client randomly create a port for UDP process
+**** Issues
+     - Message size
+       receiving process define an array of bytes to receive a message 
+       big message may truncated
+       protocol allows 2^16 bytes(include head and message body)
+     - Blocking
+       non-block sending and block receiving
+       operation returns when a message is copied to the buffer
+       message send to the buffer combined to the destination socket
+       outstanding or future process can collect the message
+       will discard if *no process bound to the port*
+       also a receive process will *block until timeout*
+       receive process should use another thread when invoked while blocking
+     - Timeout
+       to stop a receive waiting process and check the condition of sender
+     - receive from any
+       receive method does not specified an origin of message
+       return an address and port of sender
+       possible to connect a particular port, in which case the socket is known
+**** Failures
+     - data corruption
+       checksum or other error detect and correct algorithm 
+     - omission failure(send and receive omission failure)
+       buffer full
+       corruption 
+       dropping
+     - order
+       no order guaranteed
+**** Use
+     - VOIP(sensitive to jitter and delay, where TCP has a significant size of overhead)
+     - DNS(user just send another request when the first is failure)
+**** Java API for UDP datagram
+     Class: DatagramPacket, DatagramSocket
+     - DatagramPacket:
+       constructor: |array of bytes containing message|length of message|IP add|Port|
+       an DatagramPacket instance transmitted via network
+       method: .getData .getPort .getAddress 
+     - DatagramSocket:
+       constructor: one take the port number as args, or without args allows system choose one free port.
+                    SocketException can catch when a port is already in use
+       - method:
+         send and receive: send takes DatagramPacket as args, receive take an empty buffer space. 
+         setSoTimeout: set receive timeout
+         connect: connecting to particular remote Socket             
+     - UDP Client demo code
+       #+BEGIN_SRC java
+       import java.net.*;
+       import java.io.*;
+
+       public class UDPClient{
+           public static void main(String args[]){
+               //args contains message contents and hostname
+               DatagramSocket aSocket = null;
+               try {
+                   //create a instance of datagram socket
+                   aSocket = new DatagramSocket();
+                   //create a byte array and InetAddress instance prepare for DatagramPacket creation
+                   byte[] m = args[0].getBytes();
+                   InetAddress aHost = InetAddress.getByName(args[1]);
+                   //should not give a magic number to server port, need a pre-defined number 
+                   int serverPort = 6789;
+                   DatagramPacket request = new DatagramPacket(m, m.length(), aHost, serverPort);
+                   aSocket.send(request);
+                   //pre-defined buffer size for reply from server 
+                   byte[] buffer = new byte[1000];
+                   DatagramPacket reply = new DatagramPacket(buffer,buffer.length());
+                   aSocket.receive(reply);
+                   //display the reply from server
+                   System.out.println("Reply: "+ String(reply.getData()));
+               }catch(SocketException e_socket){
+                   System.out.println("Socket: "+e_socket.getMessage());
+               }catch(IOException e_io){
+                   System.out.println("IO: "+ e_io.getMessage());
+               }finally{
+                   if(aSocket != null)
+                       aSocket.close();
+               }
+           }
+       }
+       #+END_SRC
+     - UDP Server demo code
+       #+BEGIN_SRC java
+         import java.io.*;
+         import java.net.*;
+
+         public class UDPServer{
+             public static void main(String args[]){
+                 DatagramSocket aSocket = null;
+                 try{
+                     //assign a port to UDP server socket
+                     aSocket = new DatagramSocket(6789);
+                     //create a buffer array to store request from client
+                     byte[] buffer = new byte[1000];
+                     //listen to client request
+                     while(true){
+                         //get client request from buffer
+                         DatagramPacket request = new DatagramPacket(buffer,buffer.length());
+                         aSocket.receive(request);
+                         //create reply for each request
+                         DatagramPacket reply = new DatagramPacket(request.getData(),request.getLength(),request.getAddress(),request.getPort());
+                         aSocket.send(reply);
+                     }
+                 }catch(SocketException e_socket){
+                     System.out.println("Socket: "+ e_socket.getMessage());
+                 }catch(IOException e_io){
+                     System.out.println("IO: "+e_io.getMessage());
+                 }finally{
+                     if(aSocket!=null)
+                         aSocket.close();
+                 }
+             }
+         }
+
+       #+END_SRC
+*** TCP stream communication
+**** Features
+     - Message size:
+       no limit on data size, application can choose how much data they write or read
+     - Lost message: 
+       acknowledgment are required, if lost, need retransmission
+     - Flow control
+       deal with slower read and fast send issues
+     - Message duplication or ordering 
+       each IP packet associated with an ID
+     - Message destination
+       establish a connection
+       communication via established connection do not need socket, less overhead
+       connect request from client and accept reply from server 
+
+**** Issues
+     - Matching of data items
+       contents of data transmission over a stream need to be agreed
+     - Blocking
+       possible on each ends
+       read data from a input channel: read from queue or blocking until data is available
+       by TCP flow control protocol
+     - Threads
+       new thread created by server when accepted a new connection
+       advantage: can individually handle each client without affect others
+**** Failures
+     - corruption
+       checksum
+     - duplicate
+       seq number
+     - lost packet
+       timeout and retransmission
+     - severe congestion
+       declare channel broken
+       not reliable connection: can not handle all possible difficulties
+     - channel broken
+       can not distinguish between network failure or process failure
+     - can not definitely say the message recently sent were received
+**** Use
+     - HTTP: web browser and web server 
+     - FTP: remote file access
+     - Telnet: remote terminal access
+     - SMTP: mail transmission between peers
+**** Java API for TCP datagram
+     - Class: ServerSocket, Socket
+     - ServerSocket: 
+       create socket at server port
+     - Socket:
+       use by pair of processes with connection
+       client: create socket specified DNS hostname and server port; not only create a socket with local port but also connects to specified remote computer
+       methods: .getInputStream .getOutputStream these two methods return streams, can use data stream to modify it
+** external data representation marshalling
+*** Basic concept
+    - Data structure in programs are flatted to a sequence of bytes
+*** External data representation -> marshalling and unmarshalling
+    - agreed standard for representing data structures and primitive data
+**** CORBA's
+     Unreadable format
+     not commonly used today
+     each string start with a byte to indicate the length of it
+     unsigned long or integer do not need a length byte
+**** Java's object serialization
+     flatten an object to be suitable for storage or transmission
+     Information is in this object 
+     other object reference are serialization with it, called handle
+**** Extensible markup language(XML)
+     not binary: readable
+     elements to represent data or object
+     #+BEGIN_SRC xml
+       <person pers:id = "1" xmlns:pers = "http://www.cdk4.net/person">
+         <pers:name>Smith</pers:name>
+         <pers:place>London</pers:place>
+         <pers:year>1945</pers:year>
+       </person>
+     #+END_SRC
+     - problems:
+       takes more space than Java and Corba, but nowadays, this is not an issue
+       hard to transmit binary data, by this readable format. need to transform binary into word, and decode
+**** JSON
+     #+BEGIN_SRC json
+       {"employee":[
+           {"firstName":"John","lastName":Doe},
+           {"firstName":"Bowen","lastName":Huang}
+       ]}
+     #+END_SRC
+     - http://www.json.org
+       contains with all method provide by json, and the data structures
+** group communication
+  - Multicast operation for several process identified by group
+    With or without guarantee are all allowed 
+  + Usage
+    Fault tolerance based on replicated service 
+    Discovery servers 
+    Better performance through replicated data 
+*** Examples IP multicast
+    Only for UDP
+    No individuals recipient 
+    can make the socket join a group for receive multicast
+    Failure: omission -> when sender is fail to send, no one will receive 
+** overlay network
+   Own communication network over internet: 
+   e.g. Skype
+        Super node connect some host, and super node connect to each other
+* Remote invocation
+  On middleware layer
+  - Models:
+    Remote procedure call model
+    Remote method invocation model
+** Exchange protocols
+   Two army problem
+   - Request
+   - Request-reply
+   - Request-reply-acknowledge
+   - problem:
+     when a client send a command to server, and server execute the command, and send reply to client. but the reply lost during transmission. 
+     cache the reply, send reply again. but when reply store in cache, do not execute another same comman.
+     until the buffer is full with reply.
+*** Design issue
+    timeout
+    duplicate
+    lost reply
+    history: if server can send reply without re-execution
+*** Mechanism 
+    retry request
+    filter duplicate
+    result retransmission
+*** Invocation semantics 
+    + Maybe invocation semantics
+      once or not at all
+      unless caller receive the result, caller never know whether remote procedure called
+    + At-least-once : SUN RPC
+      receive success or exception for not execute
+    + At-most-once : JAVA RMI
+      receive response or exception for not execute 
+*** Transparency on remote invocation 
+    complete transparency is not desirable
+    + more likely to failure due to network and remote machine failure 
+      latency is high than local invocation 
+    *Access transparency, but not location transparency*
+*** Client-server communication
+    Synchronous RR communication
+    TCP or UDP 
+    no flow control when use TCP: number of arguments and results are limited 
+**** Examples
+     HTTP: RR
+     + protocol: 
+       msg involved in 
+       methods, arguments, results
+       marshalling rules
+     + features
+       content negotiation: client can specify the data format they can accept 
+       authentication 
+       HTTP1.1 persistent connect, before is not 
+** Remote procedure call
+   Client make request to execute service on server procedure
+   Server reply the result to client 
+*** Structure 
+    client program -> client stub procedure -> communication module --(Client to Server)--> communication module -> dispatcher -> server stub procedure -> service procedure 
+    [Client                                                        ]                        [Server                                                                        ]
+**** Example 
+     + SUN RPC
+       standard defined interface (using XDR)
+       compiler for compiling remote interface 
+       run-time library
+** Remote method invocation
+*** Object oriented concept & Distributed object 
+    + Object
+      method and attributes 
+      communication between objects by invoking method, passing arguments and receive result
+      + *Remote object* 
+        can be invoking by remote invocation or local invocation
+    + Object reference
+      used to access objects
+      + *Remote object reference*
+        can be used inside a DS
+    + Interface
+      make object available for external objects to invoke
+      + *Remote interface* 
+        for remote object 
+    + Action 
+      perform task on an object
+      + *DS action* 
+        action invoked using RMI
+    + Exception 
+      throw when error occur
+      + *Remote exception*
+        local plus special exception like Timeout
+    + garbage collection 
+      collect resource when an object no longer used 
+      + *DS garbage collection*
+        achieved by reference counting 
+*** RMI
+**** Structure
+     + Client 
+       local objects: 
+       proxy objects: play the role like local object
+                      two function: marshalling remote object, unmarshalling result  
+       remote reference module: create remote object reference, Maintain a remote objects table for translating reference
+       communication module: msg type, req ID, remote object reference
+     + Server
+       remote objects: contains servant -> allow remote invocation 
+       skeleton: unmarshalling received request and send to servant, marshalling result return to client 
+       dispatcher: mapping to method in skeleton based on method ID
+       remote reference module
+       communication module
+**** Developing steps 
+     1. Define interface for remote objects
+     2. Compiling interface 
+        generate skeleton, dispatcher and proxy
+     3. writing server
+        creating and initiating objects and register them with binder 
+     4. writing client
+        contains all proxies for remote classes 
+**** Dynamic invocation 
+     allow invocation of generic interface 
+**** Server 
+     dispatcher and skeleton
+     at least one servant
+     register servant with binder 
+**** Client
+     proxies
+**** Factory method 
+     to create *servant* 
+     *servant can not create by remote invocation*
+**** Binder
+     maintains table containing mapping from textual name to object reference
+     Server register the table and client look them up
+**** Activation of remote object
+     *active* can invocation in process 
+     *passive* not active but can 
+               implementation of methods, marshalled state 
+**** Object location 
+     *Remote object reference* used for addressing an object
+     IP address with port number 
+**** Garbage collection
+     No reference exist, then collect
+* Indirect communication
+** Intro 
+   No direct coupling the sender and receiver 
+   + Space uncoupling 
+     no identity of receiver 
+   + Time uncoupling 
+     independent life time for sender and receiver 
+     + *difference between time uncoupling and async*
+       independent life time and blocking 
+       could consider a time coupling and asynchronous system 
+** Group communication
+   Space uncoupling
+   + *more than IP multicast*:
+     manage group members 
+     detect failure and reliability and order guarantees
+*** Group model 
+    Sender -> group send -> group address expansion -> multicast communication 
+    Result: leave, fail, join by membership management
+*** Group service 
+    close or open 
+    sync or async variation 
+    overlapping group allow entities be member of group 
+*** Implementation issues 
+    + reliability and ordering
+      FIFO preserving order in sender process 
+      Casual orders based on *happen*, all process 
+      Total based on *delivery*, receiver process will receive same order msg
+    + membership management
+      leave and join
+      failed member
+      notifying change of member 
+      change of group address 
+      
+** Publish/Subscribe 
+   Event based system 
+*** Event and notification 
+    RMI and RPC is sync communication 
+    Event and notification are async model 
+*** Characteristic 
+    *Heterogeneity*: allows other object into this system, for loosely coupled client and server 
+    *Async*: and event driven 
+*** Event type 
+    attributes contains information about event
+    subscriber use type and attributes to subscribe
+    when event match, get notification
+*** Advertise
+    declare for future events, let subscriber know and can subscribe
+*** Type 
+    Channel
+    Type 
+    Topic 
+    Content
+** Message queue
+   point-to-point communication
+   space and time uncoupling
+*** Model 
+    send: put msg in queue
+    blocking receive: blocking wait for at least one return 
+    non-blocking receive: check and get, if not exist, return nothing 
+    notify: when available send a notify to receiver 
+** Shared memory 
+   process access DSM, and DSM mapping the address to remote computer, then get data to req process
+*** Can not avoid msg passing 
+    cache recent accessed data 
+*** Tuple space 
+    Tuples in tuple space is immutable, all operation is done by replace.
+    more abstract form of DSM
+    in the form of /read(<String,'Scotlan',String>)/
+    + e.g. 
+      *York Linda* kernel:
+      User process -> Local TS manager -> TS server -> other user's local TS manager -> get data 
+** possible questions:
+   Space-uncoupled and time-uncoupled -> on summary slide
+   difference between different kind of indirect communication
+* OS support
+** Networking vs Distributed OS
+*** Networked OS
+    Support for networking operations, provide commands to make use of network
+    Each host remain autonomous then it can still working when disconnected from networking
+*** Distributed OS
+    Abstract network from user and all operation on network should be undertaken
+    Single system image, each host may not have every content when disconnected
+    MOSIX is an example of single system image 
+*** Operating system includes
+    kernel libraries and servers 
+**** When a OS is divided into kernel and server process 
+     *Encapsulate*: hide all details about internal operation on host, like memory management and device operations. Only provide a interface to client
+     *Protect*: deny the illegitimate access. User cannot interfere with each other, resource will not exhausted to point of system failure 
+     *Concurrently process*: client request then all clients receive service. Can be achieved by sharing time
+** Core OS components 
+     *Process manager*: handle creation of processes, unit of resource management, encapsulating basic resource of memory(address space) and processor time(threads)
+     *Thread manager*: handle creation, sync and scheduling of threads of a process. Thread can be scheduled to receive processor time
+     *Communication manager*: interprocess communication, threads from different process
+     *Memory manager*: handle allocation and access to physical and virtual memory. Also provide translation of from virtual and physical memory.
+     *Supervisor*: handle privileged operations, which is directly operation on resource, such as IO. Ensuring host can continue provide proper service to client
+     - *Hypervisor*: sit beneath supervisor, allows a host to concurrently execute multiple kernels. Multiple levels of virtual memory and additional overhead for managing access of IO
+*** Protection
+    1. Resource that encapsulated space, such as memory and files, typically consider the operation should be read and write. 
+    2. Protection means only allowed the legitimate read and write operations
+       has right to do 
+       the operation should conform to resource policy: allocation of 1GB on a 100MB host should not be permitted.
+    3. Visibility of resource
+    4. Resource that encapsulated time, such as the operation of create a process.
+**** Kernel -> has user mode and sudo mode 
+     Full access of the host system.
+     Start and continues operation with OS
+     - two mode 
+       - supervisor mode 
+         capable of accessing and controlling every thing on the host 
+       - user mode 
+         restrict by process, only the accesses defined or granted by kernel
+     - kernel operations for this 2 mode
+       Before kernel assign a process to a user process, put the processor into user mode 
+       Based on this, all denied operations are not allowed in this mode
+     System call: when a user process need a kernel resource, make a system call to switch into kernel control. 
+     Supervisor mode is also considered as a user. but a superuser. 
+     But can only get full access when there is no active hypervisor.
+*** Processes and threads 
+    Process encapsulated memory and processor time
+    - components inside a process
+      address space and allocated memory
+      consists of threads are given processor time
+      Higher level resource like open files and window
+    Resource sharing and interprocess communication: shared memory or socket communication
+    Allocation of a resource will have cost
+*** Address space 
+    Virtual address for each process
+    *Regions*: virtual address divided into region
+    *Paged virtual memory*: divide physical address space into fixed size block
+    *Page table*: map the virtual address to real address 
+    OS manages the pages, swapping into and out of memory, in response to process need 
+    32 bit and 64 bit architecture determines the addressable memory. 2^32 or 2^64 bytes of addressable memory
+    e.g. the room in city and storage in faraway
+*** Shared memory 
+    2 separate address spaces can share parts of real memory
+    - Method
+      *Libraries*: may have a large size. so do not copy it into each process' memory, share the code 
+      *Kernel*: kernel code and data often identical across all process 
+      *Data sharing and communication*: when 2 process want to access same data or communication, share memory could be a solution
+      
+*** Creation of new process 
+    In unix, *fork system call* can duplicate the caller's address space, creating a new address space for a new process, so the caller is parent, new process is child. 
+    *Exec system call* can replace the caller's address space with a new address space for new process that is named in system call
+    The combination of these 2 could allocated a new process
+*** Copy on write
+    there is no actual copy of caller's /code/ when create a new process. because code is read-only most of time
+    /data and other memory/ is not read-only, so need a own copy for a new process
+    *Copy on write* makes a copy of memory region when the new process actually writes to it. copy when need!!!!
+** New Processes in distributed system
+   Main problem: which host should this process be created on, distributed OS determines
+   - policies to make the decision
+     *transfer policy*: determine the process should be remote or local:
+     *location policy*: determine which host should the process be
+   all decision make operation and policy are transparency to user
+*** Process location policies
+    could be /static/ or /adaptive/
+    difference is whether take current state into account
+    - *load manager* gather current state of distributed system
+      centralized: single load manager receive feedback from all other host 
+      hierarchical: Tree: root(load manager) -> internal node(load manager) -> leaves(host)
+      decentralized: a load manager for each host and communicated with each other directly
+    - *sender-initiated* -> push policy
+      sender determine the remote host to allocate the process 
+    - *receiver-initiated* -> pull policy 
+      receiver determine the allocation of process 
+*** Process migration
+    By copy the address space 
+    Process code: *CPU dependent*, e.g. x86 vs SPARC -> solution: virtual machine 
+    Host resource used by migrated process -> solution: Condor library.
+** Thread 
+   Client: Thread 1 generate result, Thread 2 makes request to server 
+   Server: Thread 1 receive request, N other Thread do operations, IO thread do IO operation
+*** Performance bottleneck
+    could take place in disk rate or processor capacity
+    multi-thread can increase the performance 
+**** worker pool 
+     Creating new thread incurs some overhead, which can be the bottleneck of server. 
+     So create a worker pool in advance can avoid this problem. 
+     But there is only one IO thread, so incoming massage need to queue in IO thread. 
+**** Thread-per-request
+     allocate a thread when a request coming and deallocated when request finished 
+     avoid shared queue for incoming request
+     - problems: 
+       thread number increase the overhead incurred in switching between threads overweight the benefits 
+       managing large number of thread is harder than manage a large queue 
+**** Thread-per-connection
+     thread independently for each connection.
+     can reduce the number of thread
+     client may make several request on one connection 
+**** Thread-per-object 
+     create thread for each required resource 
+     - problems: 
+       for t-p-c and t-p-o 
+       may leave the connection for idle incur the bottleneck issue 
+*** Thread within client
+    when request to server takes a long time, threads inside client could be a solution. 
+    e.g. for a web server, fetch 2nd page when looking at 1st page
+*** Threads vs multi-process 
+    - Advantage of thread 
+      cheaper to allocation/deallocation and easy to share resource via shared memory
+    - reason 
+      process need a new address space will lead to a new page table 
+      thread only need a new processor context 
+      If a kernel does not schedule thread across processors then multi-process is preferable
+      - Also context switching between thread is cheaper than in process 
+        because in process switching need concern about the address space 
+        *process context*: values of processor registers -> program counters, address space identify, processor protection mode 
+        *Domain translation*: context switching involves changing protection mode 
+        
+** Java thread  
+*** Thread life time    
+    new thread created by JVM.
+    Create *suspended* state when create 
+    using .start() to execute .run()
+    may assigned priorities for scheduling and can be in groups 
+    group provide protection 
+*** Thread synchronization 
+    main problem is deal with *concurrency*
+    .join(int ms) block the calling thread up to ms until the thread terminated 
+    problem: 2 thread access one resource concurrently
+    - solution:
+      1. only allow one thread access at one time 
+         /synchronized/ keyword to indicate only one thread can access 
+*** Thread scheduling 
+    - *preemptive* 
+      a thread can suspended at any time, periodically, allow processor time for other thread 
+    - *non-preemptive* 
+      running thread will continue receive processor time until thread yields control back to thread scheduler
+      but non-preemptive can not guarantee other thread receive processor time 
+*** Thread implementation 
+    Depend on kernel, process may or may not schedulable on different processors
+    Some kernel can only allocate process, other can allocate threads, known as kernel thread 
+    for first, can scheduling thread in process 
+*** User thread vs kernel thread 
+    - user thread 
+      only inside a process 
+      can not take advantage of multi processor 
+      if this thread failed, will block the process with all thread inside 
+      thread in different process can not be scheduling by single scheme
+      fast context switching
+      scheduler can be customized by user 
+    - kernel thread 
+      limits place for kernel thread, user thread can have more 
+      possible to combine these 2 
+** Communication and invocation 
+   *RMI*: Remote method invocation
+          Used in object oriented language as Java
+   *RPC*: Remote procedure call
+          Used in non-object oriented language as C
+   - The core problem is operation on a resource in a different address space 
+     + communication primitives 
+       TCP and UDP provide by kernel 
+       also have higher level provide by middleware     
+     + protocols and openness 
+       Open protocols allow interoperation between middleware on different systems
+     + invocation performance(efficient communication)
+        
+     additional support: high latency communication and disconnection
+** TT
+   - Domain transition 
+     - 2 mode:
+       user mode and kernel mode, when change the protection mode, domain transition happened.
+     - DT in same computer but different user by RPC/RMI
+       4 times, user1 -> kernel -> user2 -> kernel -> user1
+       inside each user data process by process
+     - DT between computers by RPC/RMI
+       ? 4 times
+   - Worker pool vs thread per request
+     - worker pool
+       input req should be placed in a queue
+     - tpr
+       do not need to wait in a queue
+       allocation and deallocation of thread may have a large overhead
+       potential parallelism can be maximum
+   - Thread per connection vs Thread per object
+     
+   - Shared memory faster than message passing
+     - marshalling and transmission for message passing 
+       leading to large overhead 
+     - shared memory 
+       protection problem
+   - Process location policy 
+     - static
+       
+     - dynamic 
+       
+   - Load manager
+     receive state from host and make decision of load allocation 
+     - centralized 
+       single load manager for a whole system 
+     - hierarchical 
+       leaves -> host 
+       load manager -> root
+     - decentralized 
+       
+   - Sender-initiated or receiver-initiated
+     - sender-initiated
+       when request for a new process, initiating the transfer decision
+     - receiver-initiated
+       receiver advertises to other host the new processes allocation
+     - circumustance to use the 2 policy
+       ...
+   - Monolithic and micro kernel design
+     
+* Security
+** Intro 
+   Security policy is enforced by security mechanism 
+*** Threats and attacks 
+    *obvious* read information via internet 
+    *unobvious* pretend to a server 
+    *mechanism attacks* purchase something and later denied that 
+**** Three types of threats 
+     *Leakage* read information which is not should
+     *Tampering* unauthorized alteration of information 
+     *Vandalism* intent to broke some service, like DOS 
+**** Security issues on communication channel
+     *Eavesdropping* enemy obtain copies of msg without authority
+     *Masquerading* sending or receiving using others' identity 
+     *Msg tampering* man-in-middle
+     *Replaying* store and send later 
+     *Denial of service* DOS
+**** Mobile code risk
+     VM can avoid this problem, construct a environment of running the code 
+**** Information leakage 
+     Some how the routinely operation can be observed 
+     system must be random in order 
+**** Design secure system 
+     Not a chance 
+     Known threats can design a mechanism to avoid
+***** Worst-case assumption and design guidelines 
+      + interface are exposed 
+      + network is unsecure 
+      + limit lifetime and scope of secret 
+        any password and keys can be broken if given enough time 
+      + algorithm and program code is open
+      + attacker can have large resource 
+      + minimize trust base 
+** cryptographic algorithm
+   *Key pair*
+   *Kerberos* -> Ticket Granting 
+   *Block ciphers* -> encrypted 64 bit block 
+   *Cipher block chaining* -> initialization vector to avoid send same msg in same way 
+   *Stream ciphers* -> when data is hard to divided into blocks, use key-stream and XOR original data and encryption
+*** Symmetric algorithm
+    TEA -> 
+    DES -> too weak, not safe
+    IDEA
+    RC4
+    AES
+*** Asymmetric 
+    RSA -> based on product of two large primal number 
+** digital signature
+   to sign a file, and receiver can check whether the file is changed or not 
+** Cryptography pragmatics 
+*** SSL
+    + *three basic phase*
+      Peer negotiation algorithm support
+      Public key encryption + Certificate-based authentication
+      Symmetric cipher based communication encryption
+*** TLS
+    handshake 
+    record protocol 
+      
+* File Systems 
+** Architecture 
+   DS file system is jest like file system for client 
+   Advanced DS file system = DS file system + maintain replica data + provide performance like bandwidth 
+*** Character of file system 
+**** File
+     contains /Data/ and /Attributes/ 
+**** Layers of file system
+     Directory module: relate file name to ID
+     File module: relate file ID to file location 
+     Access control: check permission 
+     File access: read or write data or attributes
+     Blocking: access and allocates disk block
+     Device: Disk IO and buffering 
+**** Distributed file system requirements  
+    + *Transparency*
+      Access
+      Location
+      Mobility: when a file move location 
+      Performance:when load variation
+      Scaling
+    + *Concurrent file update*
+      not inference with each other 
+    + *File replication* 
+      like CDN, much copies 
+    + Hardware and operating system *heterogeneity* 
+    + *Fault tolerance* 
+      fault should not lead to file corruption
+      Server can use at-most-once or at-least-once or *stateless* 
+    + *Consistency* 
+      multiple access should see the same file 
+    + *Security*
+      Authentication on client 
+      Encryption on communication
+    + *Efficiency*
+      compare to local file system
+*** File service architecture 
+    + *flat file service*
+      UFID: unique file Identification
+    + *Dictionary service*
+      map between name and UFID
+    + *Client mode*
+      maintain a list of file server, also cache to improve performance
+**** Flat File service interface 
+     Unix flat file service + *repeatable operation* (at-least-once, for the operation is *idempotent* 幂等) + *stateless server(no state need to store for easy to recover)* (for fault tolerance)
+**** Flat file service access control 
+     Server can not store access control status -> break idempotent property -> easy to recover 
+     can check when name convert to UFID
+     or identify the client each request
+**** Directory service interface 
+     the directory store in flat file server, map from name to UFID
+**** File group
+     collection of files in server, group can move from server to server, but file can not move group 
+     Client caching a map from UFID to server 
+     "IPaddress+date" file group identifier 
+*** Example: SUN Network File System
+**** Herachy model 
+    + Application program 
+    + Kernel 
+      + Virtual file system 
+        + Unix file system 
+        + other file system
+        + NFS client 
+**** Virtual file system 
+     Virtualization layer, provide transparency to application 
+     Maintain a *v-node* for each file, can indicate the file is local or remote 
+**** Client integration 
+     + *Integrity within kernel*
+       access file via UNIX file system without recompilation or reload 
+       single client module can provide service to all user, with shared cache 
+       encryption key can maintain in kernel 
+     + *problems* 
+       client caching files in local cache, will lead to *consistency* problem 
+**** Server interface 
+     NFS server interface integrate directory and file operation in single service 
+**** Mount    
+    *hard mount*: block on each access until access is complete 
+    *soft mount*: retry and return error to calling process 
+**** Server caching 
+***** Unix caching method      
+      *Read-ahead* anticipates read and fetch the pages following recent read 
+      *Delayed-write* when evicted pages and pages modified, then write to disk
+      both of these works on single computer and DS system
+      But in Server, we need to persistent writing for chance of server crash 
+      *Write-through* written to cache also disk -> *Poor*
+      *Commit* written to cache and disk when receive commit operation -> may lead to *uncommited data lost*
+***** NFS server caching 
+      1. write in memory cache and before send a reply write in disk. *Write through*
+      2. write in memory and only receive commit write to disk *Commit*, when client receive a reply of commit means the data been write 
+**** Client caching
+     May lead to *consistency* problem
+     NFS, client poll server to check for update 
+     + cache block is said to be valid:
+       T-Tc<t or T{m,client} = T{m,server}
+       Tc -> cache block valid by client 
+       Tm -> block last modified 
+       t -> given freshness interval 
+     When t is small, one copy consistency, but cost great network I/O
+     Sun NFS set t to 3-30 sec, and directory is 30-60 
+     T{m,server} store in server as file attributes 
+* Name service  
+** Name, Address and other attributes
+*** Pure name
+    contains no information about object itself 
+    used to obtain an address 
+    non pure name contains address commonly 
+*** Binding 
+    name -> object
+    name bound to attributes of named object, attributes always is address 
+    *DNS* Domain name, type, value
+** Names and service 
+   user defined name also need to be unique, e.g. Email
+   *consistency* owner of a file only allow the owner to modify 
+*** URI(Uniform Resource Identifier)
+    Kind of Resource: identify information
+    *URL* is *URI* with locator -> Kind of Resource: location -> can locate resource been named, but when name changed, maybe problems 
+    *URN* is *URI* with pure name -> need pure name translation to address 
+*** Name service 
+    Resolving a name: lookup the address attribute bound to this name 
+    + *DS NS motivation*: 
+      Unification: one resource one name 
+      Integrity: resource in DS should have same format of name
+*** Global name service 
+**** Goal 
+     Long lifetime 
+     High availability
+     large capability 
+     Fault handle, local failure do not infect whole service 
+     Tolerant of mistrust, hard to let every trust each other 
+**** Name space 
+     validate a name for specified service, if the name in name space, means the format of this name is valid. 
+***** Name domain  
+      is a name domain, single authority sign all name in this name domain
+**** Name resolution 
+***** Problems may happen
+      Cycle occur -> for use of alias 
+      abandon after some iteration || manager forbidden alias will lead to cycle
+***** Navigation 
+      iterative: from root to leaves, NS return a new server may help  
+      Multicast: server return result 
+      non-recursive server-controlling: client -> server (as this client) -> other server 
+      recursive: client -> server (self-as-client) -> other server 
+*** DNS 
+    before DNS, store map in single server, and download by FTP 
+**** DNS name server 
+     + divided name data into *zone*
+       attribute data for names in domain, but not low level administer. e.g. contains /unimelb.edu.au/ but not /csse.unimelb.edu.au/
+       name address for at least two servers, provide autoritative data for zone 
+       hold authorization data for delegate sub-domain and IP address 
+     + reason for use zone 
+       ensure each domain has two servers 
+       primary server read zone data from file, secondary copy from primary. both provide authorization for zone 
+**** DNS server load distribution
+     Low time to live in cache for DNS server record to avoid client frequent access to this server 
+* Final review
+** Lecture and project are both examinable 
+** Also articles
+** Question in 2016 exam 
+*** Q1
+    b. thin client
+       didn't require the performance of user's machine, not suitable for application require large data amount transfer 
+       
+* Project1 
+** Treading
+   - Server:
+     Connections -> port number 
+     Resources(data)
+     
+* Project2
+
+

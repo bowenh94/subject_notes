@@ -1,0 +1,133 @@
+* Elements 
+** Crawling
+   Gather data from web
+   Like a graph, search is like BFSearch of a graph.
+   mark the visited web and search for new one, by a sufficient large start point, can reach almost all the contents in world web
+*** Fundamentals 
+    - Challenges: 
+      Basic: no central index of URLs
+      Secondary: problems cause by different website and content
+      - e.g.
+        Return same content as new URL at each visit 
+        Content has short lifespan
+        Never return done on access 
+        Bandwidth 
+*** Assumption
+    if a web page is of interest, there is a link in other web site link to item
+*** Corollary -> result from assumption  
+    Given a sufficient large number of start point, every interest web will be reached
+*** Implementation 
+    Create a list of URLs
+    Choose /u/ from this list, fetch pages at /u/
+    Parsing and Indexing pages in /u/ and add them to list
+    Add /u/ to Visited list
+*** Challenges
+    Every page visited eventually 
+    Synonym(同义词) disregarded 
+    Dynamic pages visited frequently 
+    No cycling in single web site 
+** Parsing
+   Translate data into canonical format
+*** Page analysis
+    Web format can be HTML or XML, but a parser need to be robust to handle other format of website
+    - Step1: recognize the format of a page 
+      IR from documents and record it into data structure
+      Determining the format of the page
+      character encoding
+      can captured in page's metadata
+      also words in metadata can repeat, to increase the ranking when user search for this term
+*** Tokenisation
+    CONTENT elements inside META for HTML file indicate the content for IR, a phrase may occurs several times to get a higher score when get a query about this
+    When tokenisation is finished, no approx match  
+    - Problems 
+      Hyphenation(连字符): "Miller-Zadek" one or two words, word split by dash
+      Compounding(结合词): "football"
+      Possessives(同音词): "Zadek's" for "Zadeks" or "Zadek"
+**** Canonicalisation
+     Different representation of Date, Spelling or Usage(Dr vs Doctor)
+     Also date format, /e.g./ or /eg/
+***** Stemming -> used for canonicalisation  
+      Stemmers like Porter Stemmer can apply some rewrite rules for parsing
+      - e.g. 
+        sses -> ss
+        ies -> i
+        ational -> ate
+*** Zoning
+    Segmented web doc into discrete zone, text, heading and so on
+    *Font size* can determine the importance of content in a page 
+    search engine deal with weight calculate for each zone
+** Indexing
+   Build data structure for search efficiency
+   Like index in a book map to keywords location 
+   Query can be restrict to pages contains at *least one of query terms*
+*** Inverted Index
+    collection of list, one per term, record identifier of which doc contains these terms 
+    /term1/ -> doc1(f_{doc1,term1}) -> doc2(f_{doc2,term2}) -> ...
+*** Data size 
+    for 100GB web data, only 21GB indexed data 
+    B-tree search structure
+** Querying
+   Structure must be processed in response to query
+*** Phrase queries
+**** Three approach for phrase 
+     *Queries as bag-of-words*
+     *word position to index* contains location of words and frequency of words in inverted list, the location is used to determine adjacency 
+     - e.g. 
+       "the lord mayor of melbourne": intersecting list of "lord", "mayor" and "melbourne", also looking for "lord" such "mayor" at position p+1
+     *phrase index or word-pair index* no inverted index in this approach
+**** Main idea 
+     Favour doc where terms near to each other 
+     terms in same distance 
+*** Link analysis
+**** Main idea 
+     The importance of a page is related to *links*
+**** Page rank 
+     Start with each doc equal, and run the ranking algorithm. 
+     if no doc is relavent to query, give the average value to all doc.
+     on the other hand, give alpha portion to unrelated doc, remain give to relavent docs.
+***** Intuition 
+      each doc has fixed number of credits /pi(d)/: receive credits from doc points to it, All docs sum of /pi(*)/ is 1
+      calculate /pi/ by *random walk* with option to /teleport/
+****** Assumption
+       each page has same probability to be start point for random walk
+       both teleport and traversal, each link has same probability to visit
+****** Steps
+       for each doc /pi(d,0)/ is /1/N/: to ensure the sum is 1
+       for each term /pi(d,t)/ is /0/: initialize doc probability with term 
+          for each doc /di/, get all links from /di/ is /dj/ 
+*** Boolean query 
+   - Steps 
+     Fetch inverted list for each q-term
+     intersection list to resolve /and/
+     union list to resolve /or/
+     complement of a list to resolve /not/
+     ignore f_{d,t} part 
+*** Ranked query 
+**** Query using inverted file -> *Accumulator* 
+     1. Accumulator /Ad/ for each doc 
+     2. For each /t/
+        2.1 calculate /w_{q,t}/ and fetch list of /t/
+        2.2 for each /{d,f_{d,t}}/ in list 
+            calculate /w_{d,t}/
+            set /Ad/ <- /Ad + w_{q,t} * w_{d,t}/
+     3. Read array of /Wd/ <- /|w_{d}|/, for each /Ad/>0, set /Ad/ <- /Ad/Wd/
+     4. Return k greatest /Ad/ with doc
+     - Cost 
+       use accumulator array to store is time and space efficient for not none zero /Ad/
+       if the only matching term is common, the /Ad/ is trivially small, which could be majority of array
+**** Limiting approach -> set limit on number of accumulator
+     Before add /Ad/ into array, order the doc by /w_{q,t}/, set the limit /L/ as length of array /A/
+**** thresholding approach -> set minimum of /w_{q,t}*w_{d,t}/ to eliminate unrelavent doc 
+**** Query cost 
+     *Disk space*: 40% after parsing and indexing 
+     *Memory space*: accumulator and caching 
+     *CPU time*: processing inverted list and updating /A/ list 
+     *Disk traffic*: fetch inverted list 
+     But all are better than accumulator ranked query 
+*** High performance search engine 
+    click count 
+    cache answer of user query
+    manually alter common query
+    
+**** In exam: Need to explain the mechanism of page ranking, like Random walk and teleporting!
+

@@ -1,0 +1,13 @@
+* W2 <2017-08-01 Tue>
+** Top500
+** Big O
+** PRAM
+   neglect some practical issues: synchronous and 
+** EREW, Common CRCW, Priority CRCW
+
+** Brent's principle 
+** Optimality
+** Speedup
+* W3 <2017-08-07 Mon>
+** One node with multiprocessor and multicore
+ 

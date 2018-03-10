@@ -1,0 +1,20 @@
+* DONE Edit dista1nce 
+  CLOSED: [2017-06-08 Thu 20:43]
+* TODO Information retrieval 
+* TODO Page rank 
+** Language model
+** Vector space model 
+   n is not take repeated word item into account 
+   F take all into account 
+** Link analysis 
+* TODO Naive bayes 
+* TODO Decision Tree 
+** Information gain 
+** GINI 
+* TODO KNN and SVM
+** Distance method 
+* TODO Clustering 
+* TODO Association rule 
+** Support and confidence
+* TODO Evaluation 
+** Confusion matrix

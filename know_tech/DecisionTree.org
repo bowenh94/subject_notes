@@ -1,0 +1,9 @@
+* Bagging of decision trees 
+** Difference with random forest 
+   random forest: bagging + randomly selected attributes 
+   Advantage: avoid the dominite attribute in every decision tree. 
+** Main idea
+   Do classification for several times to reduce the possibility of failure
+* KNN 
+** Main idea 
+   based on geometric distance, and find the K nearest neighbours 

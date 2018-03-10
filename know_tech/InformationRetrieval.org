@@ -1,0 +1,182 @@
+* Definition
+  - Deal with storage and retrieval of documents
+    Emphasis on user, finding documents of value to an individual
+    Meaning or content is of more interest than specific word
+** Information Retrieval vs Data Retrieval
+   - Data retrieval: 
+     e.g. Database Search: 
+          Always get the same result for same well formatted input(SQL script)
+          Data already transformed into representation suitable for algebraic query
+          Unambiguous information
+          Atypical information can not be represented unless it was anticipated database creation time
+   - Information Retrieval: 
+     e.g. Search engine:
+          No specified search format and return result
+          No consistent format for documents are real world object, should concern with the documents as they original create
+          Users do not have agree on value of particular documents
+          Rich and ambiguous documents
+          May include some structured data, like <author>
+** Categories of Dewey Decimal system
+   - 000 General work, computer science and information
+     100 Philosophy and psychology
+     200 Religion
+     300 Social Science
+     400 Language
+     500 Science
+     - 500 Natural science and math
+       510 Math
+       516 Geometry
+       516.3 Analytic geometry
+     600 Tech
+     700 Arts & Creation
+     800 Literature
+     900 History & geography
+** Sizes and Data Processing Rates
+   - Kilo 10^3
+     Mega 10^6
+     Giga
+     Terra
+     Peta
+     Exa
+     Zetta
+     Yotta 10^24
+** Searching process
+*** Issue an initial query
+     Scan a list of suggested answers
+     Follow links to specific documents
+     Refine or modify query
+     Use advanced querying features
+*** Answer to a query
+     Answers contain the word in query are unreliable for most of the time
+     contain the content relevant to users' seeking 
+     - Relevance
+       Document contains content can help users to solve the information they need 
+     - In web search case:
+       Snippet in web description 
+* Approaches to retrieval
+** Boolean querying
+   Until 1994 all retrieval system use this approach
+   - Still the method for legal and biomedical search
+     repeatable, auditable, controllable
+     allow expression of complex combination of concepts
+     time in developing precise queries(months) is perceived to be compensated for by reduction in time spent reading(also months)
+   - NOT suitable for other filed
+     no ranking
+     no control in result set size
+     remarkably difficult to do well(months)
+     difficult to incorporate factors such as monotonicity
+   - several keyword combined with boolean operation
+     e.g. & &NOT 
+*** Ranking aspects 
+    - Similar
+      Probability
+      Same topic
+** Evidence of similarity
+      Documents with words in common with query: the most in common word in query may be the significant word. e.g. "south volcano" volcano is significant
+      Choose with query term in title or URL
+      Look for occurrences of query term as phrases
+      Pages create recently
+      Translate between language
+      Authoritative pages with large number of incoming links
+      Appropriately labelled incoming links
+      - Use synonyms or related terms: e.g. "volcano" with "lava" is most likely
+        Query expansion
+        Relevance feedback
+** Monotonicity 
+   Less weight to terms appear in many documents
+   More weight to terms appear many times in documents
+   Less weight to documents have many terms
+** Principles and models 
+*** Boolean Search
+    - If a term appears in a document, mark this doc as 1
+      get the vector of all docs, and use whether cosine measurement or other method to calculate relavent 
+      or boolean querying to get the return
+*** The vector space model
+   - Document: I like knowledge tech
+     Dict: A An ... I knowledge ... like ... tech ...
+           0 0      1 1             1        1
+           also the w has weight constant to describe the importance 
+   - each vector indicate a point in n dimension space
+     calculate the angle between documents, if they are close to each other means the similarity is high 
+     distance some times useless because the length of documents could be significant different
+     (kind of like support vector machine)
+   - take phrases as single word to create vector 
+   - algorithm: Cosine measurement 
+     create the vector for each documents
+     calculate the angle between them in n dimension space 
+     if the angle is small, indicate the possibility is high for them
+     (find the formular for angle calculation)
+     - Equations for calculation:
+       w(q,t) = ln(1+N/f(t))
+       w(d,t) = 1+ln(f(d,t))
+       Wd = sqrt(Sigma(t,w(d,t)^2)
+       Wq = sqrt(Sigma(q,w(q,t)^2))
+       S(q,d) = Sigma(t -> q&d, w(d,t)*w(q,t))/(Wd*Wq)
+   - Parameters:
+     f(d,t): frequency of term t in document d
+     f(q,t): frequency of term t in query q
+     f(t): number of documents containing term t
+     N: number of documents in collection
+     n: number of indexed terms in collection
+     Ft = Sigma(d,f(d,t)): number of occurrences of t in collection
+     F = Sigma(t,Ft): number of occurrences in collection
+*** Information theory
+   - frequency of words:
+     w1: 4
+     w2: 2
+     w3: 1
+     length of message: M = 7
+     possibility of w1: f1 = 4/7 ~= 1/2
+                    w2: f2 = 2/7 ~= 1/4
+                    w3: f3 = 1/7 ~= 1/8
+                    -log(1/2) = 1
+                    -log(1/4) = 2
+                    -log(1/8) = 3
+     so encoding: w1 = 1; w2 = 01; w3 = 001;
+     the space to store this encoded number is -log2(fi/M) bits to symbol 
+     SUM(for i in range(0,length(message)) -log2(fi/M)) = E(Entropy of message)
+   - Why take log format:
+     in language model, log can transform the plus into sum
+*** Language models
+    Calculate the value of a document for ranking
+    Remember the relationship between S(q,d) and parameters
+    Function based on monotonicity principle. 
+    - Parameters:
+      u: constant, influence on two part, for not significant part and significant part, tuning on u to get a better result. experiment and find the best value of u.
+      
+*** TF-IDF model
+    Term frequency - inverse document frequency model
+    - equations:
+      w(d,t) = log(f(d,t)+1)
+      w(q,t) = log(N/ft +1)
+      - +1 part in equations to avoid 0 inside log()
+      - First calculate the w(d,t) by given matrix
+        then get the vector of each document
+      - consider the query frequency
+        calculate w(q,t) to get query vector
+      - calculate the cosine between query and doc
+
+* Performance
+** Effectiveness 
+   - resource consume
+   - method is useful or not: scoring method valued by human and modify the algorithms
+** Relevance measure method
+   - Recall: take one query as one
+     N correct match/M number of query
+   - Precision: take one candidate as one result 
+     N correct match/C number of all candidates
+   - Measure two algorithm
+     Take number of query and calculate Recall and Precision
+     Other measures: F-score, error rate...
+   - baselines 
+     naive or straightforward method, expected a rich method to do better
+   - benchmark
+     best practise technique.
+     
+
+* Workshop
+** 4.1
+   w(d1,apple) = log(2,4)+1 = 3
+   v(d1) = <3,0,0,1>
+   ...
+

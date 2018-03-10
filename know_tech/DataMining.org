@@ -1,0 +1,244 @@
+* Introduction
+** Importance of DM:
+   Current computational method can not handle the scale of data today 
+   Need method to make evidence based decision 
+** Data management vs ML and DM
+   Data management: provide answer to user query 
+   ML and DM: Data management + model fit the data and provide underlying process that generate the information 
+*** Research issues
+    Database and IR: Scale, query language 
+    Distributed computing: grid, p2p and cloud computing model 
+    Security, privacy, Trust: 
+* Intro to DM
+  Not have specific answer, knowledge task 
+** Goals 
+   handle large, high dimension and complex data 
+   discover interesting pattern can help understanding underlying process 
+   useful knowledge
+** Tasks
+*** Prediction -> supervised learning  
+    Classification 
+    Regression 
+    Deviation detection(outlier detection or anomaly(不规则) detection)
+*** Description -> unsupervised learning 
+    Clustering 
+    Association rule discovery
+    Sequential pattern discovery
+** Classification
+   Data set has an attribute called class 
+   build a function(model) of attributes and the output is class of this entry 
+*** Naive Bayes 
+    *Naive*: assume attributes are independent 
+**** Features 
+     Easy to build, easy to add new data 
+     Scale well for large dimension data 
+     Easy to explain the reason for make the decision 
+*** Decision Tree
+**** Problems  
+***** Optimal construction of tree 
+      NP hard problem
+      heuristics(启发式) for DT: an attribute can significantly divide the class at top of the tree, and stop when the leaf is dominate by one class 
+***** Stop the tree 
+***** number of branches at each node
+***** determine the attributes at each node 
+      Find maximum drop from parent to children
+      Measure the node impurity 
+      All three more close to 0, more pure
+****** GINI index 
+       calculate Gini for each child
+       calculate weighted sum(consider on larger and pure partition)
+       worst case for GINI index is 0.5, smaller the better 
+******* Problem and improvement 
+        Computing GINI index for each attributes is computational inefficient 
+        Improvement: Sort the attributes, calculate Gini index by the order, and we can find the minimum Gini in middle of array 
+****** Entropy
+       Best case is 0, pure
+       For determine the split, Gain_split = E(parent) - weighted average of children 
+******* Problem and solution 
+        Tends to split into large number of partition, each is small but pure
+        Use Gain ratio instead of Gain_split
+        *Gain_ratio = Gain_split/Split_INFO*
+        Split_INFO = SUM(-(ni/n)log(ni/n)) -> ni is the number of record, n is total record
+        penalty on small but pure partition
+****** Misclassification error 
+       Error(t) = 1-max(probability of class)
+       
+**** Advantage 
+     Inexpensive for construction
+     fast on classify
+     easy to interpret for small size tree 
+     better performance on small data set 
+*** Rules based classification 
+    If(headache) then(Flu)
+**** Advantage
+     Only need one rule when make decision 
+     Easy to extract from DT
+**** Disadvantage 
+     Too restriction 
+     Too specify and complex 
+*** Random forest 
+    Bagging: number of decision trees based on different record
+    RF: random select attributes on build the tree 
+    Best performance is trees are independent to each other, no overlap attributes on each tree 
+**** Quality of RF
+     Depends on number of features /m/
+     for independent: small /m/
+     for accuracy: large /m/
+**** Mechanism for avoid overfitting and underfitting 
+     set threshold on Measurement, when value is smaller than this, stop split 
+*** Practical issues for classification
+    Missing values: can use correlation attributes to replace it 
+    Cost: with confusion matrix to evaluating the algorithm
+*** KNN
+    when dimension is high, distance always the same
+**** Distance function 
+     Euclidian distance: 欧拉距离
+     Minkowski distance: 欧拉距离，平方与开方的次数换为k, k=2 is Euclidian dis, k=1 is Manhanthon distance
+     Radial basis distance: exp(-EucDis/2o^2)
+*** SVM
+    /2/|W|/ is the distance between hyper plane
+    /W^T*x + b >=1 or <=1/ 
+    if /i-error/ allowed, this is soft margin that allow error
+**** Lagrange function 
+     For optimal hyper-plane: minimize (1/distance+error)
+**** Kernel function 
+     manipulate on input data, make the undivided data into divided
+     like x is undivided, we divide x^2
+     RBF kernel 
+     Polynomial kernel
+     linear kernel 
+**** Weakness 
+     can only divide two class, need C(2,n) model for n class 
+     + Solutions:
+       one-verse-rest 
+       one-verse-one
+       log(n) classifier
+** Clustering 
+   no class label given, group dataset by their similarity.
+   Measure: distance or cosine 
+*** Type of clusters 
+**** Well-separated 
+     Any point in one cluster is far from other point in other cluster 
+**** Center-based 
+     Any point is close to center of his cluster, center is average of point in this cluster
+**** Contiguous cluster 
+     Similar to each other, not only consider on distance, e.g. shape, connection or other attributes make them more similar
+**** Density-based 
+     separate by sparse region, dense point consist a cluster 
+**** Conceptual cluster
+     Share some common property or represent particular concept 
+**** Objective function
+     Find minimum or maximum of objective function
+     Local objective: Hierarchical 
+     Global objective: Partition 
+     e.g. Fit the data into parameterized model
+**** Map the clustering problem into other domain and solve 
+     Weighted graph problem: take the node as cluster, maximize the weight within cluster and minimize the distance between cluster
+*** K-mean
+    1. Randomly select K point as central point 
+    2. Calculate distance for each node for each central point.
+    3. Cluster the point and set new central point as average of clustering point 
+    4. 2 and 3 again, until no change on clustering result 
+**** Complexity 
+     O(n*K*I*d)
+     n: number of point 
+     K: number of cluster
+     I: number of iteration (unknow)
+     d: number of attributes
+**** Evaluation
+     Sum of Squared Error(SSE): distance from point to center, square and sum them 
+     increase K can have lower SSE, but we need a model with lower K and lower SSE
+**** Problems 
+***** Selecting initial points
+      If there is K cluster, at beginning we can select center from each cluster is small
+      e.g. 10 cluster, each have 10 point 
+           p = 10!/10^10
+      + Solution: 
+        Multiple runs 
+        Sample and use hierarchical cluster to determine the centroids 
+        Select more than K at initial 
+        + Post-processing: 
+          eliminate small cluster may have outlier
+          split loose cluster with high SSE
+          Merge close cluster with low SSE 
+          can do these during clustering 
+        + Bisecting K-means: 
+          Create a list of cluster
+          First the list contains one cluster of all points 
+          select one from list, bisect using basic-K-mean, add two clusters with lowest SSE to list 
+          until list contains K clusters 
+***** Empty clusters
+      choose point contributes most to SSE 
+      choose point from cluster has highest SSE 
+****** Updating centroids incrementally 
+       each assignment update zero or two centroids 
+       More expensive 
+       can avoid empty cluster 
+***** Clustering are differing in 
+      Size
+      Density 
+      Non-globular shapes 
+***** When has outlier
+      can do pre-process to eliminate outlier
+** Association rule discovery
+   Find dependent rules predict occurrence of item based occurrence of other terms
+   Confidence(A->B) = R(A,B)/R(A)
+   Support(A->B) = R(A,B)/N
+*** Two Steps
+**** Frequent itemset generate
+     By support()>threshold(support)
+     d item can has 2^d item set 
+**** Rule generate
+     By confidence()>threshold(confidence)
+*** Time complexity 
+    + O(NMw):
+      N: transaction number 
+      M: candidates number 2^d
+      w: width of transaction
+    + reduce approach
+      reduce N: DHP(Direct Hashing and Pruning) and vertical based mining 
+      reduce M: pruning techniques 
+      reduce NM as comparisons: no need to match each candidates, or use efficient data structure
+*** Apriori principle 
+    if an itemset is frequent, all subset must be frequent
+    so from top to bottom, when an itemset has lower support, all children could be trim 
+**** Apriori algorithm
+     k=1
+     generate itemset of length k
+     repeat until no new itemset added 
+       generate k+1 itemset
+       ignore super itemset is infrequent 
+       count support and eliminate infrequent ones 
+**** Store candidates in hash table to reduce NM
+     Hash the node and put candidates in hashed value as leaf 
+     Max leaf size: if candidates number exceed this, split the node 
+     Hash tree: each node assign several hash value. from first item to next and so on.
+     L = {A,B,C,D} is frequent, can generate associated rule 2^4-2(2^k-2)
+     conf(A->B) = support(AB)/support(A), so anti-monotone can used on conf in this situation 
+     *pruned rules* eliminate rules 
+** Sequential pattern discovery
+   Set of objects, associated with timeline, find rules predict strong sequential dependency among events 
+   e.g. telecommunications alarm, point-of-scale transaction sequences 
+** Regression 
+   Prediction of continuous valued variable 
+** Deviation 
+   detect deviation from normal behavior 
+* Probability 
+** Probabilistic Graphical model(PGM)
+** Directed Acyclic Graphs
+   These two always has pre-request. so need to multiply them together  
+* Evaluation 
+** Leave-one-out 
+   N data points, choose each data point(one!!!!) as test and rest as training 
+   Assumption: more data more accuracy
+*** Good
+    no sampling bias 
+*** Bad 
+    large data set training consumption is huge 
+** K-Fold-Cross-validation 
+   divide data set into K fold, and take one as test other as training 
+*** Good 
+    reduce the training consumption as Leave-one-out
+*** Bad 
+    bias in sampling the data, 
+    Solution: repeat CV by shuffling the data. For small dataset is not possible for each partition rep the data (Identically, Independently, Distributed)
